@@ -1,0 +1,182 @@
+[
+	{
+		"tag": "CC",
+		"meaning": "coordinating conjunction"
+	},
+	{
+		"tag": "CD",
+		"meaning": "cardinal digit"
+	},
+	{
+		"tag": "DT",
+		"meaning": "determiner"
+	},
+	{
+		"tag": "EX",
+		"meaning": "existential there"
+	},
+	{
+		"tag": "FW",
+		"meaning": "foreign word"
+	},
+	{
+		"tag": "IN",
+		"meaning": "preposition/subordinating conjunction"
+	},
+	{
+		"tag": "JJ",
+		"meaning": "adjective"
+	},
+	{
+		"tag": "JJR",
+		"meaning": "adjective, comparative"
+	},
+	{
+		"tag": "JJS",
+		"meaning": "adjective, superlative"
+	},
+	{
+		"tag": "LS",
+		"meaning": "list marker"
+	},
+	{
+		"tag": "MD",
+		"meaning": "modal"
+	},
+	{
+		"tag": "NN",
+		"meaning": "noun, singular or mass"
+	},
+	{
+		"tag": "NNS",
+		"meaning": "noun plural"
+	},
+	{
+		"tag": "NNP",
+		"meaning": "proper noun, singular"
+	},
+	{
+		"tag": "NNPS",
+		"meaning": "proper noun, plural"
+	},
+	{
+		"tag": "PDT",
+		"meaning": "predeterminer"
+	},
+	{
+		"tag": "POS",
+		"meaning": "possessive ending"
+	},
+	{
+		"tag": "PRP",
+		"meaning": "personal pronoun"
+	},
+	{
+		"tag": "PRP$",
+		"meaning": "possessive pronoun"
+	},
+	{
+		"tag": "RB",
+		"meaning": "adverb"
+	},
+	{
+		"tag": "RBR",
+		"meaning": "adverb"
+	},
+	{
+		"tag": "RBS",
+		"meaning": "adverb, superlative"
+	},
+	{
+		"tag": "RP",
+		"meaning": "particle"
+	},
+	{
+		"tag": "SYM",
+		"meaning": "symbol"
+	},
+	{
+		"tag": "TO",
+		"meaning": "to"
+	},
+	{
+		"tag": "UH",
+		"meaning": "interjection"
+	},
+	{
+		"tag": "VB",
+		"meaning": "verb, base form"
+	},
+	{
+		"tag": "VBD",
+		"meaning": "verb, past tense"
+	},
+	{
+		"tag": "VBG",
+		"meaning": "verb, gerund/present participle"
+	},
+	{
+		"tag": "VBN",
+		"meaning": "verb, past participle"
+	},
+	{
+		"tag": "VBP",
+		"meaning": "verb, sing. present, non-3d"
+	},
+	{
+		"tag": "VBZ",
+		"meaning": "verb, 3rd person sing. present"
+	},
+	{
+		"tag": "WDT",
+		"meaning": "wh-determiner"
+	},
+	{
+		"tag": "WP",
+		"meaning": "wh-pronoun"
+	},
+	{
+		"tag": "WP$",
+		"meaning": "possessive wh-pronoun"
+	},
+	{
+		"tag": "WRB",
+		"meaning": "wh-adverb"
+	},
+	{
+		"tag": ":",
+		"meaning": "Mid-sentence punctuation (: ; ... -- -)"
+	},
+	{
+		"tag": ",",
+		"meaning": "Comma"
+	},
+	{
+		"tag": ".",
+		"meaning": "End of sentence punctuation (. ! ?)"
+	},
+	{
+		"tag": "(",
+		"meaning": "Opening parenthesis, bracket, angle bracket, or brace"
+	},
+	{
+		"tag": ")",
+		"meaning": "Closing parenthesis, bracket, angle bracket, or brace"
+	},
+	{
+		"tag": "$",
+		"meaning": "Currency Sign"
+	},
+	{
+		"tag": "''",
+		"meaning": "Double or single quotation marks"
+	},
+	{
+		"tag": "#",
+		"meaning": "HastTag or Number"
+	},
+	{
+		"tag": "``",
+		"meaning": "Quotes"
+	}
+]

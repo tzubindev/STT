@@ -1,0 +1,354 @@
+{ CAPT, NUMBER, PUNC }
+
+- K => KEEP
+- R => REMOVE
+
+===========================================
+[1] { K K K }
+===========================================
+
+==================
+|Accuracy Testing|
+==================
+
+Case 1 Accuracy: 0.82
+Case 2 Accuracy: 0.8333333333333334
+Case 3 Accuracy: 0.8
+Case 4 Accuracy: 0.7666666666666667
+Case 5 Accuracy: 0.8266666666666667
+Case 6 Accuracy: 0.8466666666666667
+Case 7 Accuracy: 0.8533333333333334
+Case 8 Accuracy: 0.8266666666666667
+Case 9 Accuracy: 0.8
+Case 10 Accuracy: 0.84
+Case 11 Accuracy: 0.8333333333333334
+Case 12 Accuracy: 0.8
+Case 13 Accuracy: 0.8333333333333334
+Case 14 Accuracy: 0.84
+Case 15 Accuracy: 0.8
+Case 16 Accuracy: 0.7933333333333333
+Case 17 Accuracy: 0.8133333333333334
+Case 18 Accuracy: 0.8066666666666666
+Case 19 Accuracy: 0.8266666666666667
+Case 20 Accuracy: 0.8333333333333334
+
+==============
+|Summary Info|
+==============
+
+Average Value                   : 0.8197
+Standard Deviation              : 0.021
+Average Absolute Deviation      : 0.0177
+Max Value                       : 0.8533
+Min Value                       : 0.7667
+Max Difference                  : 0.0867
+< 80                            : LENGTH [2] => [0.7666666666666667, 0.7933333333333333]
+> Avr                           : LENGTH [12] => [0.82, 0.8266666666666667, 0.8266666666666667, 0.8266666666666667, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.8333333333333334, 0.84, 0.84, 0.8466666666666667, 0.8533333333333334]
+Total Execution Time            : 735.9622459411621 seconds
+Average Execution Time          : 36.798112297058104 seconds
+
+===========================================
+[2] { R K K }
+===========================================
+
+==================
+|Accuracy Testing|
+==================
+
+Case 1 Accuracy: 0.8133333333333334
+Case 2 Accuracy: 0.8266666666666667
+Case 3 Accuracy: 0.8466666666666667
+Case 4 Accuracy: 0.7933333333333333
+Case 5 Accuracy: 0.82
+Case 6 Accuracy: 0.8266666666666667
+Case 7 Accuracy: 0.8733333333333333
+Case 8 Accuracy: 0.84
+Case 9 Accuracy: 0.8733333333333333
+Case 10 Accuracy: 0.74
+Case 11 Accuracy: 0.8
+Case 12 Accuracy: 0.86
+Case 13 Accuracy: 0.8333333333333334
+Case 14 Accuracy: 0.8533333333333334
+Case 15 Accuracy: 0.8266666666666667
+Case 16 Accuracy: 0.8733333333333333
+Case 17 Accuracy: 0.8066666666666666
+Case 18 Accuracy: 0.8
+Case 19 Accuracy: 0.8466666666666667
+Case 20 Accuracy: 0.7933333333333333
+
+==============
+|Summary Info|
+==============
+
+Average Value                   : 0.8273
+Standard Deviation              : 0.0325
+Average Absolute Deviation      : 0.0254
+Max Value                       : 0.8733
+Min Value                       : 0.74
+Max Difference                  : 0.1333
+< 80                            : LENGTH [3] => [0.74, 0.7933333333333333, 0.7933333333333333]
+> Avr                           : LENGTH [9] => [0.8333333333333334, 0.84, 0.8466666666666667, 0.8466666666666667, 0.8533333333333334, 0.86, 0.8733333333333333, 0.8733333333333333, 0.8733333333333333]
+Total Execution Time            : 768.2865223884583 seconds
+Average Execution Time          : 38.41432611942291 seconds
+
+===========================================
+[3] { K R K }
+===========================================
+
+==================
+|Accuracy Testing|
+==================
+
+Case 1 Accuracy: 0.8133333333333334
+Case 2 Accuracy: 0.8066666666666666
+Case 3 Accuracy: 0.8533333333333334
+Case 4 Accuracy: 0.8
+Case 5 Accuracy: 0.8266666666666667
+Case 6 Accuracy: 0.7933333333333333
+Case 7 Accuracy: 0.8266666666666667
+Case 8 Accuracy: 0.8466666666666667
+Case 9 Accuracy: 0.8133333333333334
+Case 10 Accuracy: 0.8133333333333334
+Case 11 Accuracy: 0.8266666666666667
+Case 12 Accuracy: 0.7733333333333333
+Case 13 Accuracy: 0.82
+Case 14 Accuracy: 0.84
+Case 15 Accuracy: 0.8133333333333334
+Case 16 Accuracy: 0.7866666666666666
+Case 17 Accuracy: 0.8866666666666667
+Case 18 Accuracy: 0.8133333333333334
+Case 19 Accuracy: 0.82
+Case 20 Accuracy: 0.8333333333333334
+
+==============
+|Summary Info|
+==============
+
+Average Value                   : 0.8203
+Standard Deviation              : 0.0243
+Average Absolute Deviation      : 0.0177
+Max Value                       : 0.8867
+Min Value                       : 0.7733
+Max Difference                  : 0.1133
+< 80                            : LENGTH [3] => [0.7733333333333333, 0.7866666666666666, 0.7933333333333333]
+> Avr                           : LENGTH [8] => [0.8266666666666667, 0.8266666666666667, 0.8266666666666667, 0.8333333333333334, 0.84, 0.8466666666666667, 0.8533333333333334, 0.8866666666666667]
+Total Execution Time            : 792.4371507167816 seconds
+Average Execution Time          : 39.621857535839084 seconds
+
+===========================================
+[4] { K K R }
+===========================================
+
+==================
+|Accuracy Testing|
+==================
+
+Case 1 Accuracy: 0.82
+Case 2 Accuracy: 0.8266666666666667
+Case 3 Accuracy: 0.8333333333333334
+Case 4 Accuracy: 0.8
+Case 5 Accuracy: 0.8133333333333334
+Case 6 Accuracy: 0.8266666666666667
+Case 7 Accuracy: 0.7933333333333333
+Case 8 Accuracy: 0.8266666666666667
+Case 9 Accuracy: 0.8133333333333334
+Case 10 Accuracy: 0.84
+Case 11 Accuracy: 0.8866666666666667
+Case 12 Accuracy: 0.8333333333333334
+Case 13 Accuracy: 0.84
+Case 14 Accuracy: 0.8266666666666667
+Case 15 Accuracy: 0.84
+Case 16 Accuracy: 0.8066666666666666
+Case 17 Accuracy: 0.8
+Case 18 Accuracy: 0.7933333333333333
+Case 19 Accuracy: 0.74
+Case 20 Accuracy: 0.78
+
+==============
+|Summary Info|
+==============
+
+Average Value                   : 0.817
+Standard Deviation              : 0.0287
+Average Absolute Deviation      : 0.0213
+Max Value                       : 0.8867
+Min Value                       : 0.74
+Max Difference                  : 0.1467
+< 80                            : LENGTH [4] => [0.74, 0.78, 0.7933333333333333, 0.7933333333333333]        
+> Avr                           : LENGTH [11] => [0.82, 0.8266666666666667, 0.8266666666666667, 0.8266666666666667, 0.8266666666666667, 0.8333333333333334, 0.8333333333333334, 0.84, 0.84, 0.84, 0.8866666666666667]   
+Total Execution Time            : 718.4725914001465 seconds
+Average Execution Time          : 35.92362957000732 seconds
+
+===========================================
+[5] { R R K }
+===========================================
+
+Case 1 Accuracy: 0.7933333333333333
+Case 2 Accuracy: 0.8066666666666666
+Case 3 Accuracy: 0.8666666666666667
+Case 4 Accuracy: 0.8666666666666667
+Case 5 Accuracy: 0.8466666666666667
+Case 6 Accuracy: 0.86
+Case 7 Accuracy: 0.9133333333333333
+Case 8 Accuracy: 0.8266666666666667
+Case 9 Accuracy: 0.8133333333333334
+Case 10 Accuracy: 0.8266666666666667
+Case 11 Accuracy: 0.8266666666666667
+Case 12 Accuracy: 0.7866666666666666
+Case 13 Accuracy: 0.7666666666666667
+Case 14 Accuracy: 0.76
+Case 15 Accuracy: 0.84
+Case 16 Accuracy: 0.8933333333333333
+Case 17 Accuracy: 0.8733333333333333
+Case 18 Accuracy: 0.8133333333333334
+Case 19 Accuracy: 0.8
+Case 20 Accuracy: 0.84
+
+==============
+|Summary Info|
+==============
+
+Average Value                   : 0.831
+Standard Deviation              : 0.0394
+Average Absolute Deviation      : 0.0321
+Max Value                       : 0.9133
+Min Value                       : 0.76
+Max Difference                  : 0.1533
+< 80                            : LENGTH [4] => [0.76, 0.7666666666666667, 0.7866666666666666, 0.7933333333333333]
+> Avr                           : LENGTH [9] => [0.84, 0.84, 0.8466666666666667, 0.86, 0.8666666666666667, 0.8666666666666667, 0.8733333333333333, 0.8933333333333333, 0.9133333333333333]
+Total Execution Time            : 387.79283928871155 seconds
+Average Execution Time          : 19.389641964435576 seconds
+
+===========================================
+[6] { R K R }
+===========================================
+
+==================
+|Accuracy Testing|
+==================
+
+Case 1 Accuracy: 0.8333333333333334
+Case 2 Accuracy: 0.8333333333333334
+Case 3 Accuracy: 0.8
+Case 4 Accuracy: 0.82
+Case 5 Accuracy: 0.8066666666666666
+Case 6 Accuracy: 0.86
+Case 7 Accuracy: 0.8533333333333334
+Case 8 Accuracy: 0.8333333333333334
+Case 9 Accuracy: 0.8866666666666667
+Case 10 Accuracy: 0.7933333333333333
+Case 11 Accuracy: 0.8466666666666667
+Case 12 Accuracy: 0.78
+Case 13 Accuracy: 0.82
+Case 14 Accuracy: 0.8733333333333333
+Case 15 Accuracy: 0.86
+Case 16 Accuracy: 0.8333333333333334
+Case 17 Accuracy: 0.8266666666666667
+Case 18 Accuracy: 0.8466666666666667
+Case 19 Accuracy: 0.8266666666666667
+Case 20 Accuracy: 0.86
+
+==============
+|Summary Info|
+==============
+
+Average Value                   : 0.8347
+Standard Deviation              : 0.0265
+Average Absolute Deviation      : 0.0209
+Max Value                       : 0.8867
+Min Value                       : 0.78
+Max Difference                  : 0.1067
+< 80                            : LENGTH [2] => [0.78, 0.7933333333333333]
+> Avr                           : LENGTH [8] => [0.8466666666666667, 0.8466666666666667, 0.8533333333333334, 0.86, 0.86, 0.86, 0.8733333333333333, 0.8866666666666667]
+Total Execution Time            : 434.37895822525024 seconds
+Average Execution Time          : 21.71894791126251 seconds
+
+===========================================
+[7] { K R R }
+===========================================
+
+==================
+|Accuracy Testing|
+==================
+
+Case 1 Accuracy: 0.82
+Case 2 Accuracy: 0.8066666666666666
+Case 3 Accuracy: 0.7866666666666666
+Case 4 Accuracy: 0.8
+Case 5 Accuracy: 0.82
+Case 6 Accuracy: 0.84
+Case 7 Accuracy: 0.8066666666666666
+Case 8 Accuracy: 0.8133333333333334
+Case 9 Accuracy: 0.8
+Case 10 Accuracy: 0.7933333333333333
+Case 11 Accuracy: 0.8333333333333334
+Case 12 Accuracy: 0.88
+Case 13 Accuracy: 0.88
+Case 14 Accuracy: 0.7933333333333333
+Case 15 Accuracy: 0.8133333333333334
+Case 16 Accuracy: 0.8066666666666666
+Case 17 Accuracy: 0.8133333333333334
+Case 18 Accuracy: 0.8133333333333334
+Case 19 Accuracy: 0.7933333333333333
+Case 20 Accuracy: 0.8466666666666667
+
+==============
+|Summary Info|
+==============
+
+Average Value                   : 0.818
+Standard Deviation              : 0.0257
+Average Absolute Deviation      : 0.0194
+Max Value                       : 0.88
+Min Value                       : 0.7867
+Max Difference                  : 0.0933
+< 80                            : LENGTH [4] => [0.7866666666666666, 0.7933333333333333, 0.7933333333333333, 0.7933333333333333]
+> Avr                           : LENGTH [7] => [0.82, 0.82, 0.8333333333333334, 0.84, 0.8466666666666667, 0.88, 0.88]
+Total Execution Time            : 412.28699231147766 seconds
+Average Execution Time          : 20.614349615573882 seconds
+
+===========================================
+[8] { R R R }
+===========================================
+
+==================
+|Accuracy Testing|
+==================
+
+Case 1 Accuracy: 0.84
+Case 2 Accuracy: 0.78
+Case 3 Accuracy: 0.8
+Case 4 Accuracy: 0.8333333333333334
+Case 5 Accuracy: 0.84
+Case 6 Accuracy: 0.8666666666666667
+Case 7 Accuracy: 0.8466666666666667
+Case 8 Accuracy: 0.8666666666666667
+Case 9 Accuracy: 0.8866666666666667
+Case 10 Accuracy: 0.8466666666666667
+Case 11 Accuracy: 0.8333333333333334
+Case 12 Accuracy: 0.7733333333333333
+Case 13 Accuracy: 0.8866666666666667
+Case 14 Accuracy: 0.8933333333333333
+Case 15 Accuracy: 0.8666666666666667
+Case 16 Accuracy: 0.8666666666666667
+Case 17 Accuracy: 0.8
+Case 18 Accuracy: 0.74
+Case 19 Accuracy: 0.84
+Case 20 Accuracy: 0.8466666666666667
+
+==============
+|Summary Info|
+==============
+
+Average Value                   : 0.8377
+Standard Deviation              : 0.0396
+Average Absolute Deviation      : 0.0304
+Max Value                       : 0.8933
+Min Value                       : 0.74
+Max Difference                  : 0.1533
+< 80                            : LENGTH [3] => [0.74, 0.7733333333333333, 0.78]
+> Avr                           : LENGTH [13] => [0.84, 0.84, 0.84, 0.8466666666666667, 0.8466666666666667, 0.8466666666666667, 0.8666666666666667, 0.8666666666666667, 0.8666666666666667, 0.8666666666666667, 0.8866666666666667, 0.8866666666666667, 0.8933333333333333]
+Total Execution Time            : 373.194043636322 seconds
+Average Execution Time          : 18.6597021818161 seconds
+
+===========================================
