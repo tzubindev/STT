@@ -34,7 +34,6 @@ def STT_Audio(query: AudioQuery):
 
     if query.url == "testing":
         # return {"Result": "Not Applicable."}
-        return {"result": str(open(os.getcwd() + "/test.mp3", "rb").readlines())}
         result = Transcribe(os.getcwd() + "/test.mp3", True).getText()
     else:
         result = Transcribe(query.url.strip()).getText()

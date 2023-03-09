@@ -34,7 +34,8 @@ class Transcribe:
         except:
             return "Audio File Error - Writing"
 
-        model = whisper.load_model("base")
+        model = whisper.load_model("tiny")
+        # model = whisper.load_model("small")
         result = model.transcribe(audio_file, fp16=False)
 
         return result["text"]
