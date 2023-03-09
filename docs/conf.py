@@ -16,7 +16,7 @@ author = 'Wong Tze Byng, Ghassan Y. J. Rashwan'
 extensions = []
 
 templates_path = ['_templates']
-exclude_patterns = []
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 
 
