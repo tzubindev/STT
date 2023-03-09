@@ -27,7 +27,7 @@ def read_root():
 
 
 @app.post("/stt/audio")
-def STT_Text(query: AudioQuery):
+def STT_Audio(query: AudioQuery):
     result = None
     sorted_word_counts = None
     MarkedWords = None
