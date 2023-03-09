@@ -26,7 +26,7 @@ def read_root():
     return {"Hello": "World"}
 
 
-@app.post("/stt/audio/")
+@app.post("/stt/audio")
 def STT_Text(query: AudioQuery):
     result = None
     sorted_word_counts = None
@@ -78,7 +78,7 @@ def STT_Text(query: AudioQuery):
     }
 
 
-@app.post("/stt/text/")
+@app.post("/stt/text")
 def STT_Text(query: TextQuery):
     processed_result = TextProcessing(query.text)
 
