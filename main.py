@@ -32,13 +32,13 @@ def STT_Audio(query: AudioQuery):
     sorted_word_counts = None
     MarkedWords = None
 
-    return {"result": 1}
-
     if query.url == "testing":
         # return {"Result": "Not Applicable."}
         result = Transcribe(os.getcwd() + "/test.mp3", True).getText()
     else:
         result = Transcribe(query.url.strip()).getText()
+
+    return {"result": result}
 
     processed_result = TextProcessing(result)
 
