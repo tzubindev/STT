@@ -2,6 +2,7 @@ from text_processing import TextProcessing
 from textblob import TextBlob
 import spacy
 import re
+import nltk
 
 
 class SensitiveWordsMarking:
@@ -59,32 +60,92 @@ class SensitiveWordsMarking:
                 else:
                     self.result[key] = False
 
+    def search(self, wordsArr, character):
+        start = 0
+        end = len(wordsArr) - 1
+
+        while start <= end:
+            mid = start + (end - start) // 2
+
+            if str(wordsArr[mid])[0].lower() > character:
+                end = mid - 1
+            elif str(wordsArr[mid])[0].lower() < character:
+                start = mid + 1
+            else:
+                return mid
+
+        return -1
+
     def getMarkedObj(self):
         sWords = None
         with open("./data/sensitive_words.txt") as f:
             sWords = [line.strip() for line in f.readlines()]
-
-        SIZE = int(len(sWords) / 7)
+        sWords = sorted(sWords)
 
         for word in self.processed_sentence:
+
+            # Binary Search Algo
+            target_ch = str(word[0]).lower()
+            searchIndex = self.search(sWords, target_ch)
+            if searchIndex == -1:
+                self.result[word] = []
+                continue
+
+            while sWords[searchIndex - 1][0] == target_ch:
+                searchIndex -= 1
+
+            endIndex = searchIndex
+            while sWords[endIndex][0] == target_ch:
+                endIndex += 1
+
             a = self.nlp(word)
-            sensitive_words = []
 
-            for i in range(0, SIZE):
+            sensitive_words = [sWords[i] for i in range(searchIndex, endIndex)]
+            result_words = []
 
-                similarities = dict()
+            for w in sensitive_words:
+                if nltk.edit_distance(str(a), str(w)) > 5:
+                    continue
+                w = self.nlp(w)
+                if w.vector_norm:
+                    if a.similarity(w) > 0.8:
+                        result_words.append(str(w))
 
-                for j in range(7):
-                    foo = self.nlp(sWords[SIZE * j + i])
-                    if foo.vector_norm:
-                        similarities[foo] = a.similarity(foo)
-
-                for key, value in similarities.items():
-                    if value >= 0.8:
-                        sensitive_words.append(key)
-
-            self.result[word] = sensitive_words
+            self.result[word] = result_words
 
         self.checkMatchedWords()
         self.mark()
         return self.result
+
+    def getMarkedHTML(self):
+        head = """
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <title>Text Analysis</title>
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <script src="https://cdn.tailwindcss.com"></script>
+            </head>
+            <body class="w-screen h-screen overflow-x-hidden flex flex-col p-8">
+                <h1 class="w-full h-auto block text-center text-2xl font-bold">Senstive Words Marking</h1>
+                <div class="grow flex items-center">
+                    <div class="w-3/4 m-auto h-auto grid grid-cols-12 p-4 text-center gap-6">"""
+
+        content = ""
+        for key, value in self.result.items():
+            content += "<div "
+            if value:
+                content += "class='border-t-4 border-red-500'"
+            else:
+                content += "class='border-t-4 border-green-500'"
+            content += ">" + key + "</div>"
+
+        tail = """
+                    </div>
+                </div>
+            </body>
+        </html>
+                """
+
+        return head + content + tail

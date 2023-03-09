@@ -1,59 +1,36 @@
-import speech_recognition as sr
+import whisper
 import requests
-
-from pydub import AudioSegment
-from os import path
+import os
 
 
 class Transcribe:
-    def __init__(self, url=None, audiofile=None) -> None:
+    def __init__(self, url, isAudioFile=False) -> None:
         self.url = url
-        self.audio_file = audiofile
+        self.isAudioFile = isAudioFile
 
     def getText(self):
-        if self.url == None and self.audio_file == None:
-            return "Syntax Error"
-
-        req = None
+        root_file_name = "audio_0"
         audio_file = None
-        if self.audio_file is None:
-            try:
-                req = requests.get(self.url, allow_redirects=True)
-                audio_file = req.content
-            except:
-                return "Audio File Error - Writing"
-        else:
-            audio_file = self.audio_file
-        r = sr.Recognizer()
-        aud = None
-        audio_file = path.join(path.dirname(path.realpath(__file__)), audio_file)
-        new_audio_file = "".join(audio_file.split(".")[:-1]) + ".wav"
 
-        # # Write into a files
-        # with open(audio_file, "wb+") as f:
-        #     f.write(res.content)
-
-        AudioSegment.from_mp3(audio_file).export(new_audio_file, format="wav")
-        audio_file = new_audio_file
         try:
-            with sr.AudioFile(new_audio_file) as source:
-                r.adjust_for_ambient_noise(source, duration=0.5)
-                aud = r.record(source)
+            if not self.isAudioFile:
+                while os.path.exists(root_file_name + ".mp3"):
+                    names = root_file_name.split("_")
+                    names[1] = int(names[1]) + 1
+                    root_file_name = "_".join(names)
+
+                audio_file = root_file_name + ".mp3"
+
+                res = requests.get(self.url, allow_redirects=True)
+                # Write into a files
+                with open(audio_file, "wb+") as f:
+                    f.write(res.content)
+            else:
+                audio_file = self.url
         except:
-            return "Audio File Error - Reading"
+            return "Audio File Error - Writing"
 
-        response = None
+        model = whisper.load_model("base")
+        result = model.transcribe(audio_file, fp16=False)
 
-        try:
-            response = r.recognize_sphinx(aud)
-        except sr.UnknownValueError:
-            response = "Audio is not understandable."
-            raise
-        except sr.RequestError as e:
-            response = e
-            raise
-
-        return response
-
-
-print(Transcribe(audiofile="10sec.mp3").getText())
+        return result["text"]

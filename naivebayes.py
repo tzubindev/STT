@@ -5,44 +5,14 @@ import math
 from text_processing import TextProcessing
 import time
 
-start_time = time.time()
-data_files = [
-    "./data/amazon_cells_labelled.txt",
-    "./data/imdb_labelled.txt",
-    "./data/yelp_labelled.txt",
-    "./data/self-defined.txt",
-]
-processed_data = dict()
-lines = []
-
-for file in data_files:
-    with open(file, "r", encoding="utf-8") as f:
-        readlines = f.readlines()
-        for line in readlines:
-            lines.append(line)
-
-
-for line in lines:
-    label = line.rstrip()[:-1].rstrip()
-    feature = line.rstrip()[-1]
-
-    # print(TextProcessing(label).getProcessedSentence())
-    processed_data[TextProcessing(label).getProcessedSentence()] = int(feature)
-
-
-data = [(sentence, processed_data[sentence]) for sentence in processed_data]
-
+# start_time = time.time()
 # Additional Data => 2000 more data (1000->pos, 1000->neg)
-lines = []
-cnt = 0
-isPos = True
+# lines = []
+# cnt = 0
 
+# training_rate = 0.95
 
-random.shuffle(data)
-
-training_rate = 0.95
-
-train_data = data[: math.ceil(len(data) * training_rate)]
+# train_data = data[: math.ceil(len(data) * training_rate)]
 # test_data = data[math.ceil(len(data) * training_rate) :]
 
 # print(f"Data Size: {len(data)}")
@@ -50,7 +20,44 @@ train_data = data[: math.ceil(len(data) * training_rate)]
 # print(f"Test Data Size: {len(test_data)}")
 # print(f"Test/Train Ratio: {len(test_data)/len(train_data)}")
 
-cl = NaiveBayesClassifier(train_data)
+
+class NaiveBayes:
+    def __init__(self) -> None:
+        data_files = [
+            "./data/amazon_cells_labelled.txt",
+            "./data/imdb_labelled.txt",
+            "./data/yelp_labelled.txt",
+            "./data/self-defined.txt",
+        ]
+        processed_data = dict()
+        lines = []
+
+        for file in data_files:
+            with open(file, "r", encoding="utf-8") as f:
+                readlines = f.readlines()
+                for line in readlines:
+                    lines.append(line)
+
+        for line in lines:
+            label = line.rstrip()[:-1].rstrip()
+            feature = line.rstrip()[-1]
+
+            # print(TextProcessing(label).getProcessedSentence())
+            processed_data[TextProcessing(label).getProcessedSentence()] = int(feature)
+
+        data = [(sentence, processed_data[sentence]) for sentence in processed_data]
+        random.shuffle(data)
+        random.shuffle(data)
+        # training_data = data[: math.ceil(len(data) * 0.2)]
+        training_data = data
+
+        self.cl = NaiveBayesClassifier(training_data)
+
+    def getClassifier(self):
+        return self.cl
+
+
+# Analysis Purpose
 
 # # # for (sentence, label) in test_data:
 # # #     prob_dist = cl.prob_classify(sentence)

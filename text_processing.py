@@ -75,3 +75,13 @@ class TextProcessing:
 
         processed_sentence = " ".join(processed_sentence.strip().split())
         return processed_sentence
+
+    def getWordCounts(self):
+        from textblob import TextBlob
+
+        blob = TextBlob(self.s)
+        counts = dict()
+        for word in blob.words:
+            counts[word] = blob.word_counts[str(word).lower()]
+
+        return counts
