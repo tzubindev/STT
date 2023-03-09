@@ -1,7 +1,7 @@
 import requests
 
 
-url = "http://193.168.10.212:8000/stt/audio"
+url = "http://127.0.0.1:8000/stt/audio"
 body = {"url": "testing"}
 
 

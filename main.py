@@ -32,6 +32,8 @@ def STT_Audio(query: AudioQuery):
     sorted_word_counts = None
     MarkedWords = None
 
+    return {"result": 1}
+
     if query.url == "testing":
         # return {"Result": "Not Applicable."}
         result = Transcribe(os.getcwd() + "/test.mp3", True).getText()
@@ -96,17 +98,17 @@ def STT_Text(query: TextQuery):
     MarkedWords["html"] = markedObj.getMarkedHTML()
 
     sentiment = None
-    # cl = NaiveBayes().getClassifier()
-    # if (
-    #     TextBlob(
-    #         processed_result.getProcessedSentence(),
-    #         classifier=cl,
-    #     ).classify()
-    #     == 1
-    # ):
-    #     sentiment = "Positive"
-    # else:
-    #     sentiment = "Negative"
+    cl = NaiveBayes().getClassifier()
+    if (
+        TextBlob(
+            processed_result.getProcessedSentence(),
+            classifier=cl,
+        ).classify()
+        == 1
+    ):
+        sentiment = "Positive"
+    else:
+        sentiment = "Negative"
 
     return {
         "id": 1,

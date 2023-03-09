@@ -20,6 +20,7 @@ class Transcribe:
                     names[1] = int(names[1]) + 1
                     root_file_name = "_".join(names)
 
+                # audio_file = root_file_name + ".mp3"
                 audio_file = "/tmp/" + root_file_name + ".mp3"
 
                 subprocess.Popen(["./create-file.sh %s" % audio_file], shell=True)
