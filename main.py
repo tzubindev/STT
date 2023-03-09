@@ -96,17 +96,17 @@ def STT_Text(query: TextQuery):
     MarkedWords["html"] = markedObj.getMarkedHTML()
 
     sentiment = None
-    cl = NaiveBayes().getClassifier()
-    if (
-        TextBlob(
-            processed_result.getProcessedSentence(),
-            classifier=cl,
-        ).classify()
-        == 1
-    ):
-        sentiment = "Positive"
-    else:
-        sentiment = "Negative"
+    # cl = NaiveBayes().getClassifier()
+    # if (
+    #     TextBlob(
+    #         processed_result.getProcessedSentence(),
+    #         classifier=cl,
+    #     ).classify()
+    #     == 1
+    # ):
+    #     sentiment = "Positive"
+    # else:
+    #     sentiment = "Negative"
 
     return {
         "id": 1,

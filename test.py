@@ -1,7 +1,7 @@
 import requests
 
 
-url = "https://stt-api.tamade.dev/stt/audio"
+url = "http://193.168.10.212:8000/stt/audio"
 body = {"url": "testing"}
 
 
