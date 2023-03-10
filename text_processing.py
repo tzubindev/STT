@@ -2,6 +2,8 @@ import string
 import nltk
 from nltk.tokenize import WhitespaceTokenizer
 from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 
 wnl = WordNetLemmatizer()
 tags = dict()
@@ -33,7 +35,10 @@ with open("./data/tags.json", "r") as f:
 
 class TextProcessing:
     def __init__(self, sentence) -> None:
-        self.s = sentence
+        nltk.download("stopwords")
+        stop_words = set(stopwords.words("english"))
+        word_tokens = word_tokenize(sentence)
+        self.s = " ".join([w for w in word_tokens if w.lower() not in stop_words])
 
     def getProcessedSentence(self):
         label = self.s
@@ -82,6 +87,7 @@ class TextProcessing:
         blob = TextBlob(self.s)
         counts = dict()
         for word in blob.words:
-            counts[word] = blob.word_counts[str(word).lower()]
+            word = str(word).lower()
+            counts[word] = blob.word_counts[word]
 
         return counts

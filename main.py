@@ -14,10 +14,6 @@ class AudioQuery(BaseModel):
     url: str
 
 
-class TextQuery(BaseModel):
-    text: str
-
-
 app = FastAPI()
 
 
@@ -37,8 +33,6 @@ def STT_Audio(query: AudioQuery):
         result = Transcribe(os.getcwd() + "/test.mp3", True).getText()
     else:
         result = Transcribe(query.url.strip()).getText()
-
-    return {"result": result}
 
     processed_result = TextProcessing(result)
 
@@ -71,48 +65,6 @@ def STT_Audio(query: AudioQuery):
     return {
         "id": 1,
         "text": result,
-        "most_frequent_words": sorted_word_counts,
-        "sensitive_words": {
-            "obj": MarkedWords["obj"],
-            "html": MarkedWords["html"],
-        },
-        "sentiment": sentiment,
-    }
-
-
-@app.post("/stt/text")
-def STT_Text(query: TextQuery):
-    processed_result = TextProcessing(query.text)
-
-    word_counts = processed_result.getWordCounts()
-
-    sorted_word_counts = dict(
-        sorted(word_counts.items(), key=lambda x: x[1], reverse=True)
-    )
-    sorted_word_counts = dict(itertools.islice(sorted_word_counts.items(), 5))
-
-    markedObj = SensitiveWordsMarking(processed_result.getProcessedSentence())
-
-    MarkedWords = dict()
-    MarkedWords["obj"] = markedObj.getMarkedObj()
-    MarkedWords["html"] = markedObj.getMarkedHTML()
-
-    sentiment = None
-    cl = NaiveBayes().getClassifier()
-    if (
-        TextBlob(
-            processed_result.getProcessedSentence(),
-            classifier=cl,
-        ).classify()
-        == 1
-    ):
-        sentiment = "Positive"
-    else:
-        sentiment = "Negative"
-
-    return {
-        "id": 1,
-        "text": processed_result.getProcessedSentence(),
         "most_frequent_words": sorted_word_counts,
         "sensitive_words": {
             "obj": MarkedWords["obj"],

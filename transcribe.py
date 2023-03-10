@@ -20,10 +20,10 @@ class Transcribe:
                     names[1] = int(names[1]) + 1
                     root_file_name = "_".join(names)
 
-                # audio_file = root_file_name + ".mp3"
-                audio_file = "/tmp/" + root_file_name + ".mp3"
+                audio_file = root_file_name + ".mp3"
+                # audio_file = "/tmp/" + root_file_name + ".mp3"
 
-                subprocess.Popen(["./create-file.sh %s" % audio_file], shell=True)
+                # subprocess.Popen(["./create-file.sh %s" % audio_file], shell=True)
 
                 res = requests.get(self.url, allow_redirects=True)
                 # Write into a files
@@ -34,8 +34,8 @@ class Transcribe:
         except:
             return "Audio File Error - Writing"
 
-        model = whisper.load_model("tiny")
-        # model = whisper.load_model("small")
+        # model = whisper.load_model("tiny")
+        model = whisper.load_model("small")
         result = model.transcribe(audio_file, fp16=False)
 
         return result["text"]
