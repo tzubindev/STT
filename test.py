@@ -1,9 +1,18 @@
 import requests
+import json
+
+url = "http://127.0.0.1:8000/stt/audio"
+data = {"url": "testing"}
 
 
-url = "http://193.168.10.212:8000/stt/audio"
-body = {"url": "testing"}
+response = requests.post(url, json=data)
+# print(response.json())
 
+with open("./result/r1.json", "w") as f:
+    json.dump(response.json(), f, ensure_ascii=False, indent=4)
 
-response = requests.post(url, json=body)
-print(response.json())
+import requests
+
+url = "http://127.0.0.1:8000/stt/audio"
+data = {"url": "PUT YOUR AUDIO URL HERE"}
+response = requests.post(url, json=data)
