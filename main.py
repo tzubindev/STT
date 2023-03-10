@@ -1,5 +1,6 @@
 from text_processing import TextProcessing
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from sensitive_words_marking import SensitiveWordsMarking
 from transcribe import Transcribe
@@ -19,7 +20,10 @@ app = FastAPI()
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    lines = None
+    with open("./docs/index.html", "r", encoding="utf-8") as f:
+        lines = "".join(f.readlines())
+    return HTMLResponse(content=lines)
 
 
 @app.post("/stt/audio")
