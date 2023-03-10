@@ -29,8 +29,8 @@
 		}
 	</style>
 	<script>
-		var tabs = document.getElementsByClassName("tab");
-		function tab(e, codeIndex) {
+		function tab(e, tab, codeIndex) {
+			var tabs = document.getElementsByClassName(`tab${tab}`);
 			for (let tab of tabs) {
 				tab.classList.remove("selected");
 			}
@@ -46,13 +46,37 @@
 				<span>something2</span>
 			`;
 
-			var codes = [python_code, cs_code, js_code];
+			var usage1_python_code = `
+				import webbrowser<br />
+				import os<br />
+				<br />
+				with open("./output/test.html", "w") as f:<br />
+				f.write(response.json().sensitive_words.html.strip())<br />
+				<br />
+				<span class="italic"># to get the current working directory</span><br />
+				directory = os.getcwd()<br />
+				webbrowser.open(directory + "/output/test.html")<br />
+			`;
 
-			document.getElementById("req_code").innerHTML = codes[codeIndex];
+			var usage1_cs_code = `
+				something1
+			`;
+
+			var usage1_js_code = `
+				something2
+			`;
+
+			var codes = [python_code, cs_code, js_code];
+			var ucodes = [usage1_python_code, usage1_cs_code, usage1_js_code];
+
+			if (tab === 1) document.getElementById("req_code").innerHTML = codes[codeIndex];
+			else {
+				document.getElementById(`usage${tab - 1}`).innerHTML = ucodes[codeIndex];
+			}
 		}
 	</script>
 
-	<body>
+	<body class="c-font">
 		<div class="min-h-full">
 			<nav class="bg-orange-400 c-text flex items-center">
 				<div class="p-4 flex items-center">
@@ -69,15 +93,15 @@
 					<div>
 						<div>
 							<div class="text-black text-3xl text-left font-semibold py-4">Request</div>
-							<ul class="flex mb-0 list-none flex-wrap flex-row w-1/3">
+							<ul class="flex mb-0 list-none flex-wrap flex-row w-full md:w-2/5">
 								<li class="mb-px last:mr-0 flex-auto text-center">
-									<a class="tab c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer selected" onclick="tab(this,0)">Python</a>
+									<a class="tab1 c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer selected" onclick="tab(this,1,0)">Python</a>
 								</li>
 								<li class="mb-px last:mr-0 flex-auto text-center">
-									<a class="tab c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer" onclick="tab(this,1)">C#</a>
+									<a class="tab1 c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer" onclick="tab(this,1,1)">C#</a>
 								</li>
 								<li class="mb-px last:mr-0 flex-auto text-center">
-									<a class="tab c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer" onclick="tab(this,2)">Java Script</a>
+									<a class="tab1 c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer" onclick="tab(this,1,2)">JavaScript</a>
 								</li>
 							</ul>
 
@@ -99,48 +123,90 @@
 						<div class="text-black text-3xl text-left font-semibold py-4">Expected Response</div>
 
 						<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5">
-							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-base font-semibold">id</div>
-							<div class="text-xs font-thin italic ml-2 mr-4 flex items-end">INTEGER</div>
-							<div class="text-base font-thin flex items-center">An identification token generated for each transcription request sent by the user.</div>
+							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">id</div>
+							<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">INTEGER</div>
+							<div class="text-xs font-thin flex items-center">An identification token generated for each transcription request sent by the user.</div>
 						</div>
 						<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2">
-							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-base font-semibold">text</div>
-							<div class="text-xs font-thin italic ml-2 mr-4 flex items-end">STRING</div>
-							<div class="text-base font-thin flex items-center">The transcribed text from the audio recording provided by the user.</div>
+							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">text</div>
+							<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">STRING</div>
+							<div class="text-xs font-thin flex items-center">The transcribed text from the audio recording provided by the user.</div>
 						</div>
 						<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2">
-							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-base font-semibold">most_frequent_words</div>
-							<div class="text-xs font-thin italic ml-2 mr-4 flex items-end">OBJECT</div>
-							<div class="text-base font-thin flex items-center">A list of words that appeared the most in the transcribed audio.</div>
+							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">most_frequent_words</div>
+							<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">OBJECT</div>
+							<div class="text-xs font-thin flex items-center">A list of words that appeared the most in the transcribed audio.</div>
 						</div>
 						<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2">
-							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-base font-semibold">sensitive_words</div>
-							<div class="text-xs font-thin italic ml-2 mr-4 flex items-end">OBJECT</div>
-							<div class="text-base font-thin flex items-center">A list of offensive words extracted from the generated text from the audio file.</div>
+							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">sensitive_words</div>
+							<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">OBJECT</div>
+							<div class="text-xs font-thin flex items-center">A list of offensive words extracted from the generated text from the audio file.</div>
 						</div>
 						<div class="grid grid-cols-12">
 							<div class="w-full h-full p-4">
 								<div class="border-b border-l border-gray-300 w-full h-full"></div>
 							</div>
 							<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2 col-start-2 col-span-11">
-								<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-base font-semibold flex items-center">obj</div>
-								<div class="text-xs font-thin italic ml-2 mr-4 flex items-end">BOOLEAN</div>
+								<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">has_sensitive_word</div>
+								<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">BOOLEAN</div>
+								<div class="text-xs font-thin flex items-center">Return true if any sensitive word is mentioned in audio possibly. Otherwise, return false.</div>
+							</div>
+							<div class="w-full h-full p-4">
+								<div class="border-b border-l border-gray-300 w-full h-full"></div>
+							</div>
+							<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2 col-start-2 col-span-11">
+								<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">obj</div>
+								<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">OBJ</div>
 								<div class="text-xs font-thin flex items-center">The collection of the words that are segregated into true and false. True implies the list of offensive words found, and False are all the non-offensive words in the generated text.</div>
 							</div>
 							<div class="w-full h-full p-4">
 								<div class="border-b border-l border-gray-300 w-full h-full"></div>
 							</div>
 							<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2 col-start-2 col-span-11">
-								<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-base font-semibold flex items-center">html</div>
-								<div class="text-xs font-thin italic ml-2 mr-4 flex items-end">STRING</div>
+								<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">html</div>
+								<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">STRING</div>
 								<div class="text-xs font-thin flex items-center">The pre-written HTML content that are able to be used to view analysed sentence with sensitive-words-marking visually.</div>
 							</div>
 						</div>
 
-						<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2">
-							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-base font-semibold flex items-center">sentiment</div>
-							<div class="text-xs font-thin italic ml-2 mr-4 flex items-end">STRING</div>
-							<div class="text-base font-thin flex items-center">This specifies the overall emotional tone of the text generated from the audio file. The sentiment of the text is classified into "positive" or "negative" tone.</div>
+						<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2 mb-4">
+							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">sentiment</div>
+							<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">STRING</div>
+							<div class="text-xs font-thin flex items-center">This specifies the overall emotional tone of the text generated from the audio file. The sentiment of the text is classified into "positive" or "negative" tone.</div>
+						</div>
+					</div>
+					<div class="py-4">
+						<div class="text-black text-3xl text-left font-semibold">Usage</div>
+						<div class="py-4">
+							<div class="text-sm mb-2 font-medium flex items-center">
+								To visualise
+								<div class="mx-1 px-2 py-0.5 bg-orange-400 rounded-md text-center text-white text-base font-semibold">sensitive_words</div>
+								Result :
+							</div>
+							<ul class="flex mb-0 list-none flex-wrap flex-row w-full md:w-2/5">
+								<li class="mb-px last:mr-0 flex-auto text-center">
+									<a class="tab2 c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer selected" onclick="tab(this,2,0)">Python</a>
+								</li>
+								<li class="mb-px last:mr-0 flex-auto text-center">
+									<a class="tab2 c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer" onclick="tab(this,2,1)">C#</a>
+								</li>
+								<li class="mb-px last:mr-0 flex-auto text-center">
+									<a class="tab2 c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer" onclick="tab(this,2,2)">JavaScript</a>
+								</li>
+							</ul>
+							<div class="c-bg rounded-md text-white font-semibold text-sm p-6 mb-4 mt-0 c-font">
+								<p id="usage1">
+									import webbrowser<br />
+									import os<br />
+									<br />
+									with open("./output/test.html", "w") as f:<br />
+									f.write(response.json().sensitive_words.html.strip())<br />
+									<br />
+									<span class="italic"># to get the current working directory</span><br />
+									directory = os.getcwd()<br />
+									webbrowser.open(directory + "/output/test.html")<br />
+								</p>
+							</div>
 						</div>
 					</div>
 				</div>
