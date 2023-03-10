@@ -26,6 +26,14 @@ def read_root():
     return HTMLResponse(content=lines)
 
 
+@app.get("/doc")
+def read_root():
+    lines = None
+    with open("./docs/doc.html", "r", encoding="utf-8") as f:
+        lines = "".join(f.readlines())
+    return HTMLResponse(content=lines)
+
+
 @app.post("/stt/audio")
 def STT_Audio(query: AudioQuery):
     result = None

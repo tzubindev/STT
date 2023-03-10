@@ -7,11 +7,6 @@
 		<link href="https://fonts.cdnfonts.com/css/cascadia-code" rel="stylesheet" />
 	</head>
 	<style>
-		.selected {
-			background-color: #2f3e46;
-			color: white;
-		}
-
 		.c-bg {
 			background-color: #2f3e46;
 		}
@@ -20,197 +15,19 @@
 			color: #2f3e46;
 		}
 
-		.c-rounded-lr {
-			border-radius: 5px 5px 0 0;
-		}
-
 		.c-font {
 			font-family: "Cascadia Code", sans-serif;
 		}
 	</style>
-	<script>
-		function tab(e, tab, codeIndex) {
-			var tabs = document.getElementsByClassName(`tab${tab}`);
-			for (let tab of tabs) {
-				tab.classList.remove("selected");
-			}
-			e.classList.add("selected");
-
-			var python_code =
-				'<span class="text-purple-300 block">import<span class="text-green-300"> requests</span> </span><br /><span class="block text-sky-300">url<span class="text-white"> = </span> <span class="text-yellow-600">"http://127.0.0.1:8000/stt/audio"</span> </span><span class="block text-sky-300">data<span class="text-white"> = </span> <span class="text-yellow-600">{ "url"</span><span class="text-white">: </span> <span class="text-yellow-600">"PUT YOUR AUDIO URL HERE" }</span></span><span class="block text-sky-300">response<span class="text-white"> = </span> <span class="text-green-300"> requests</span><span class="text-white">.</span><span class="text-yellow-400">post</span><span class="text-sky-300"><span class="text-yellow-600">(</span>url</span><span class="text-white">, </span><span class="text-sky-300">json</span><span class="text-white">=</span><span class="text-sky-300">data<span class="text-yellow-600">)</span></span></span>';
-
-			var cs_code =
-				'<span>using System.Net.Http;<br><br>private static readonly HttpClient client = new HttpClient();<br><br>var values = new Dictionary<string, string><br>{<br>{ "url": "PUT YOUR AUDIO URL HERE" }<br>};<br><br>var content = new FormUrlEncodedContent(values);<br>var response = await client.PostAsync("http://127.0.0.1:8000/stt/audio", content);<br>var responseString = await response.Content.ReadAsStringAsync();</span>';
-
-			var js_code = `
-				<span>something2</span>
-			`;
-
-			var usage1_python_code = `
-				import webbrowser<br />
-				import os<br />
-				<br />
-				with open("./output/test.html", "w") as f:<br />
-				f.write(response.json().sensitive_words.html.strip())<br />
-				<br />
-				<span class="italic"># to get the current working directory</span><br />
-				directory = os.getcwd()<br />
-				webbrowser.open(directory + "/output/test.html")<br />
-			`;
-
-			var usage1_cs_code = `
-				something1
-			`;
-
-			var usage1_js_code = `
-				something2
-			`;
-
-			var codes = [python_code, cs_code, js_code];
-			var ucodes = [usage1_python_code, usage1_cs_code, usage1_js_code];
-
-			if (tab === 1) document.getElementById("req_code").innerHTML = codes[codeIndex];
-			else {
-				document.getElementById(`usage${tab - 1}`).innerHTML = ucodes[codeIndex];
-			}
-		}
-	</script>
-
-	<body class="c-font">
-		<div class="min-h-full">
-			<nav class="bg-orange-400 c-text flex items-center">
-				<div class="p-4 flex items-center">
-					<img src="https://img.icons8.com/ios-filled/50/2f3e46/microphone--v1.png" class="h-6 w-6 mr-2" />
-					<h1 class="text-lg font-semibold leading-6">Documentation</h1>
+	<body class="bg-gradient-to-b from-gray-700 to-slate-800 h-screen overflow-hidden p-12 flex items-center justify-center">
+		<div>
+			<div class="flex w-full justify-center mt-[-100px]"><img src="../resource/img/logo.png" class="" /></div>
+			<div class="p-4">
+				<h1 class="block text-center w-full text-5xl font-extrabold text-white">Speech-To-Text API</h1>
+				<div class="w-full flex justify-center mt-6">
+					<div class="bg-orange-400 text-white c-font p-2 px-3 shadow-sm border-none rounded-md transition hover:bg-white hover:text-orange-500 hover:translate-y-[-4px] hover:font-bold cursor-pointer" onclick="window.open(document.URL+'doc')">Get Started</div>
 				</div>
-			</nav>
-			<main>
-				<div class="h-full mx-auto max-w-7xl py-4 px-8 divide-y grid grid-col-1">
-					<div class="text-black text-3xl text-left font-semibold py-4">
-						Speech-to-Text API
-						<div class="text-sm mt-4 font-thin">The Speech-to-Text API, audio files can be quickly transcribed into written text for further analysis.</div>
-					</div>
-					<div>
-						<div>
-							<div class="text-black text-3xl text-left font-semibold py-4">Request</div>
-							<ul class="flex mb-0 list-none flex-wrap flex-row w-full md:w-2/5">
-								<li class="mb-px last:mr-0 flex-auto text-center">
-									<a class="tab1 c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer selected" onclick="tab(this,1,0)">Python</a>
-								</li>
-								<li class="mb-px last:mr-0 flex-auto text-center">
-									<a class="tab1 c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer" onclick="tab(this,1,1)">C#</a>
-								</li>
-								<li class="mb-px last:mr-0 flex-auto text-center">
-									<a class="tab1 c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer" onclick="tab(this,1,2)">JavaScript</a>
-								</li>
-							</ul>
-
-							<div class="c-bg rounded-md text-white font-semibold text-sm p-6 mb-4 mt-0 c-font">
-								<p id="req_code">
-									<span class="text-purple-300 block">import<span class="text-green-300"> requests</span> </span>
-									<br />
-									<span class="block text-sky-300">url<span class="text-white"> = </span> <span class="text-yellow-600">"http://127.0.0.1:8000/stt/audio"</span> </span>
-									<span class="block text-sky-300">data<span class="text-white"> = </span> <span class="text-yellow-600">{ "url"</span><span class="text-white">: </span> <span class="text-yellow-600">"PUT YOUR AUDIO URL HERE" }</span></span>
-									<span class="block text-sky-300"
-										>response<span class="text-white"> = </span> <span class="text-green-300"> requests</span><span class="text-white">.</span><span class="text-yellow-400">post</span><span class="text-sky-300"><span class="text-yellow-600">(</span>url</span
-										><span class="text-white">, </span><span class="text-sky-300">json</span><span class="text-white">=</span><span class="text-sky-300">data<span class="text-yellow-600">)</span></span></span
-									>
-								</p>
-							</div>
-						</div>
-					</div>
-					<div>
-						<div class="text-black text-3xl text-left font-semibold py-4">Expected Response</div>
-
-						<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5">
-							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">id</div>
-							<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">INTEGER</div>
-							<div class="text-xs font-thin flex items-center">An identification token generated for each transcription request sent by the user.</div>
-						</div>
-						<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2">
-							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">text</div>
-							<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">STRING</div>
-							<div class="text-xs font-thin flex items-center">The transcribed text from the audio recording provided by the user.</div>
-						</div>
-						<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2">
-							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">most_frequent_words</div>
-							<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">OBJECT</div>
-							<div class="text-xs font-thin flex items-center">A list of words that appeared the most in the transcribed audio.</div>
-						</div>
-						<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2">
-							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">sensitive_words</div>
-							<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">OBJECT</div>
-							<div class="text-xs font-thin flex items-center">A list of offensive words extracted from the generated text from the audio file.</div>
-						</div>
-						<div class="grid grid-cols-12">
-							<div class="w-full h-full p-4">
-								<div class="border-b border-l border-gray-300 w-full h-full"></div>
-							</div>
-							<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2 col-start-2 col-span-11">
-								<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">has_sensitive_word</div>
-								<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">BOOLEAN</div>
-								<div class="text-xs font-thin flex items-center">Return true if any sensitive word is mentioned in audio possibly. Otherwise, return false.</div>
-							</div>
-							<div class="w-full h-full p-4">
-								<div class="border-b border-l border-gray-300 w-full h-full"></div>
-							</div>
-							<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2 col-start-2 col-span-11">
-								<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">obj</div>
-								<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">OBJ</div>
-								<div class="text-xs font-thin flex items-center">The collection of the words that are segregated into true and false. True implies the list of offensive words found, and False are all the non-offensive words in the generated text.</div>
-							</div>
-							<div class="w-full h-full p-4">
-								<div class="border-b border-l border-gray-300 w-full h-full"></div>
-							</div>
-							<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2 col-start-2 col-span-11">
-								<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">html</div>
-								<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">STRING</div>
-								<div class="text-xs font-thin flex items-center">The pre-written HTML content that are able to be used to view analysed sentence with sensitive-words-marking visually.</div>
-							</div>
-						</div>
-
-						<div class="flex c-bg shadow-sm rounded-md text-white text-xs py-2 px-2.5 mt-2 mb-4">
-							<div class="px-3 py-0.5 bg-orange-400 rounded-md text-center text-sm font-semibold flex items-center">sentiment</div>
-							<div class="text-xs font-bold italic ml-2 mr-4 flex items-end">STRING</div>
-							<div class="text-xs font-thin flex items-center">This specifies the overall emotional tone of the text generated from the audio file. The sentiment of the text is classified into "positive" or "negative" tone.</div>
-						</div>
-					</div>
-					<div class="py-4">
-						<div class="text-black text-3xl text-left font-semibold">Usage</div>
-						<div class="py-4">
-							<div class="text-sm mb-2 font-medium flex items-center">
-								To visualise
-								<div class="mx-1 px-2 py-0.5 bg-orange-400 rounded-md text-center text-white text-base font-semibold">sensitive_words</div>
-								Result :
-							</div>
-							<ul class="flex mb-0 list-none flex-wrap flex-row w-full md:w-2/5">
-								<li class="mb-px last:mr-0 flex-auto text-center">
-									<a class="tab2 c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer selected" onclick="tab(this,2,0)">Python</a>
-								</li>
-								<li class="mb-px last:mr-0 flex-auto text-center">
-									<a class="tab2 c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer" onclick="tab(this,2,1)">C#</a>
-								</li>
-								<li class="mb-px last:mr-0 flex-auto text-center">
-									<a class="tab2 c-rounded-lr text-xs font-bold uppercase px-5 py-3 block leading-normal cursor-pointer" onclick="tab(this,2,2)">JavaScript</a>
-								</li>
-							</ul>
-							<div class="c-bg rounded-md text-white font-semibold text-sm p-6 mb-4 mt-0 c-font">
-								<p id="usage1">
-									import webbrowser<br />
-									import os<br />
-									<br />
-									with open("./output/test.html", "w") as f:<br />
-									f.write(response.json().sensitive_words.html.strip())<br />
-									<br />
-									<span class="italic"># to get the current working directory</span><br />
-									directory = os.getcwd()<br />
-									webbrowser.open(directory + "/output/test.html")<br />
-								</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</main>
+			</div>
 		</div>
 	</body>
 </html>
