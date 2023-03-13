@@ -42,7 +42,7 @@ def STT_Audio(query: AudioQuery):
 
     if query.url == "testing":
         # return {"Result": "Not Applicable."}
-        result = Transcribe(os.getcwd() + "/test.mp3", True).getText()
+        result = Transcribe(os.getcwd() + "\\test.mp3", True).getText()
     else:
         result = Transcribe(query.url.strip()).getText()
 
@@ -58,27 +58,23 @@ def STT_Audio(query: AudioQuery):
     markedObj = SensitiveWordsMarking(processed_result.getProcessedSentence())
 
     MarkedWords = dict()
+    MarkedWords["has_sensitive_word"] = markedObj.hasSensitiveWord()
     MarkedWords["obj"] = markedObj.getMarkedObj()
     MarkedWords["html"] = markedObj.getMarkedHTML()
 
-    sentiment = None
-    cl = NaiveBayes().getClassifier()
-    if (
-        TextBlob(
-            processed_result.getProcessedSentence(),
-            classifier=cl,
-        ).classify()
-        == 1
-    ):
-        sentiment = "Positive"
-    else:
-        sentiment = "Negative"
+    sentiment = NaiveBayes().classifySentences(result)
+
+    # if NaiveBayes().classifySentences(result) == 1:
+    #     sentiment = "Positive"
+    # else:
+    #     sentiment = "Negative"
 
     return {
         "id": 1,
         "text": result,
         "most_frequent_words": sorted_word_counts,
         "sensitive_words": {
+            "has_senstive_word": MarkedWords["has_sensitive_word"],
             "obj": MarkedWords["obj"],
             "html": MarkedWords["html"],
         },

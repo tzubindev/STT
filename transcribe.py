@@ -37,7 +37,7 @@ class Transcribe:
         # model = whisper.load_model("tiny")
         model = whisper.load_model("small")
         result = model.transcribe(audio_file, fp16=False)
-        if os.path.exists(audio_file):
+        if os.path.exists(audio_file) and not self.isAudioFile:
             os.remove(audio_file)
 
         return result["text"]

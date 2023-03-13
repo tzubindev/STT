@@ -130,7 +130,7 @@ class SensitiveWordsMarking:
             <body class="w-screen h-screen overflow-x-hidden flex flex-col p-8">
                 <h1 class="w-full h-auto block text-center text-2xl font-bold">Senstive Words Marking</h1>
                 <div class="grow flex items-center">
-                    <div class="w-3/4 m-auto h-auto grid grid-cols-12 p-4 text-center gap-6">"""
+                    <div class="w-3/4 m-auto h-auto grid grid-cols-8 p-4 text-center gap-4">"""
 
         content = ""
         for key, value in self.result.items():
@@ -149,3 +149,10 @@ class SensitiveWordsMarking:
                 """
 
         return head + content + tail
+
+    def hasSensitiveWord(self):
+        for key, value in self.result.items():
+            if value:
+                return True
+
+        return False
