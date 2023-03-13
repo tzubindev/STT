@@ -196,15 +196,20 @@
 							</ul>
 							<div class="c-bg rounded-md text-white font-semibold text-sm p-6 mb-4 mt-0 c-font">
 								<p id="usage1">
-									import webbrowser<br />
-									import os<br />
-									<br />
-									with open("./output/test.html", "w") as f:<br />
-									f.write(response.json().sensitive_words.html.strip())<br />
-									<br />
-									<span class="italic"># to get the current working directory</span><br />
-									directory = os.getcwd()<br />
-									webbrowser.open(directory + "/output/test.html")<br />
+									import webbrowser<br/>
+									import os<br/>
+									<br/>
+									response = None<br/>
+									<br/>
+									with open("./result/r1.json", "r") as f1:<br/>
+									&emsp; response = dict(json.loads("".join(f1.readlines())))<br/>
+										<br/>
+									with open("./output/test.html", "w") as f:<br/>
+									&emsp; f.write(response["sensitive_words"]["html"])<br/>
+										<br/>
+									<div class="italic"># to get the current working directory</div><br/>
+									directory = os.getcwd()<br/>
+									webbrowser.open(directory + "/output/test.html")<br/>
 								</p>
 							</div>
 						</div>
