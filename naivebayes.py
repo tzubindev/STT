@@ -4,7 +4,6 @@ import random
 import math
 from text_processing import TextProcessing
 import time
-from collections import Counter
 
 # start_time = time.time()
 # Additional Data => 2000 more data (1000->pos, 1000->neg)
@@ -65,8 +64,7 @@ class NaiveBayes:
                 self.cl.classify(TextProcessing(s).getProcessedSentence())
             )
 
-        col = Counter(sentiments)
-        return col.most_common(1)[0][0]
+        return {}
 
 
 # Analysis Purpose
