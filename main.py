@@ -15,6 +15,8 @@ class AudioQuery(BaseModel):
     url: str
 
 
+classifier = NaiveBayes()
+
 app = FastAPI()
 
 
@@ -62,7 +64,7 @@ def STT_Audio(query: AudioQuery):
     MarkedWords["obj"] = markedObj.getMarkedObj()
     MarkedWords["html"] = markedObj.getMarkedHTML()
 
-    sentiment = NaiveBayes().classifySentences(result)
+    sentiment = classifier.classifySentences(result)
 
     # if NaiveBayes().classifySentences(result) == 1:
     #     sentiment = "Positive"
