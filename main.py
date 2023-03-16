@@ -227,7 +227,7 @@ def STT_Test():
                 "content": "fuck. No thanks.",
                 "date": "15/03/2023",
                 "time": "09:48:00",
-                "sentiment": "Positive",
+                "sentiment": "Negative",
                 "confidence": 0.34,
             },
             {
