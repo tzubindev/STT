@@ -15,11 +15,13 @@ import itertools
 class AudioQuery(BaseModel):
     url: str
 
+
 class TextQuery(BaseModel):
-    string:str
+    string: str
+
 
 class CommentQuery(BaseModel):
-    highest_count:int
+    highest_count: int
 
 
 classifier = NaiveBayes()
@@ -99,22 +101,23 @@ def STT_Audio(query: AudioQuery):
         "sentiment": sentiment,
     }
 
+
 @app.post("/stt/text")
-def PostText(query:TextQuery):
-    return{"response": query.string}
+def PostText(query: TextQuery):
+    return {"response": query.string}
+
 
 @app.post("/stt/test")
-def test(query:CommentQuery):
-   print(query.highest_count)
-   return {"response": "Created"}
+def test(query: CommentQuery):
+    print(query.highest_count)
+    return {"response": "Created"}
+
 
 @app.get("/stt/test")
 def STT_Test():
     return {
         "sentiment": {
             "distribution": {
-                "isPosClicked": False,
-                "isNegClicked": False,
                 "pos": 10,
                 "neg": 90,
             }
@@ -264,7 +267,3 @@ def STT_Test():
             },
         ],
     }
-
-
-
-    
