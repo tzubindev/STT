@@ -25,3 +25,14 @@ with open("./output/test.html", "w") as f:
 # to get the current working directory
 directory = os.getcwd()
 webbrowser.open(directory + "/output/test.html")
+
+url = "http://127.0.0.1:8000/stt/text"
+textData = {"string": "very long text asdsadasdsasadds"} 
+try:
+    response = requests.post(url, data=json.dumps(textData))
+    print("Response body:", response.json())
+except requests.exceptions.RequestException as e:
+    print("Error:", e)
+
+
+
