@@ -21,7 +21,7 @@ class TextQuery(BaseModel):
 
 
 class CommentQuery(BaseModel):
-    highest_count: int
+    comment: str
 
 
 classifier = NaiveBayes()
@@ -109,8 +109,8 @@ def PostText(query: TextQuery):
 
 @app.post("/stt/test")
 def test(query: CommentQuery):
-    print(query.highest_count)
-    return {"response": "Created"}
+    result = query.comment
+    return {"response": result}
 
 
 @app.get("/stt/test")
@@ -183,6 +183,8 @@ def STT_Test():
                 "time": "09:48:00",
                 "sentiment": "Positive",
                 "confidence": 0.97,
+                "isClicked": False,
+                "comment": "",
             },
             {
                 "from": "agent",
@@ -192,6 +194,8 @@ def STT_Test():
                 "time": "09:48:00",
                 "sentiment": "Positive",
                 "confidence": 0.87,
+                "isClicked": False,
+                "comment": "",
             },
             {
                 "from": "client",
@@ -201,6 +205,8 @@ def STT_Test():
                 "time": "09:48:00",
                 "sentiment": "Positive",
                 "confidence": 0.47,
+                "isClicked": False,
+                "comment": "",
             },
             {
                 "from": "agent",
@@ -210,6 +216,8 @@ def STT_Test():
                 "time": "09:48:00",
                 "sentiment": "Positive",
                 "confidence": 0.17,
+                "isClicked": False,
+                "comment": "",
             },
             {
                 "from": "client",
@@ -219,6 +227,8 @@ def STT_Test():
                 "time": "09:48:00",
                 "sentiment": "Positive",
                 "confidence": 0.27,
+                "isClicked": False,
+                "comment": "",
             },
             {
                 "from": "agent",
@@ -228,6 +238,8 @@ def STT_Test():
                 "time": "09:48:00",
                 "sentiment": "Positive",
                 "confidence": 0.33,
+                "isClicked": False,
+                "comment": "",
             },
             {
                 "from": "agent",
@@ -237,6 +249,8 @@ def STT_Test():
                 "time": "09:48:00",
                 "sentiment": "Positive",
                 "confidence": 0.65,
+                "isClicked": False,
+                "comment": "",
             },
             {
                 "from": "client",
@@ -246,6 +260,8 @@ def STT_Test():
                 "time": "09:48:00",
                 "sentiment": "Negative",
                 "confidence": 0.34,
+                "isClicked": False,
+                "comment": "",
             },
             {
                 "from": "agent",
@@ -255,6 +271,8 @@ def STT_Test():
                 "time": "09:48:00",
                 "sentiment": "Positive",
                 "confidence": 0.24,
+                "isClicked": False,
+                "comment": "",
             },
             {
                 "from": "agent",
@@ -264,6 +282,8 @@ def STT_Test():
                 "time": "09:48:00",
                 "sentiment": "Positive",
                 "confidence": 0.11,
+                "isClicked": False,
+                "comment": "",
             },
         ],
     }
