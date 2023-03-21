@@ -65,7 +65,6 @@ class NaiveBayes:
             sentiments.append(
                 self.cl.classify(TextProcessing(str(s)).getProcessedSentence())
             )
-        print(sentiments)
         positiveCounter = 0
         negativeCounter = 0
         counter = 0

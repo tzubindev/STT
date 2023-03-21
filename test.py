@@ -1,6 +1,7 @@
 import requests
 import json
 
+
 url = "http://127.0.0.1:8000/stt/audio"
 data = {"url": "testing"}
 
@@ -35,4 +36,34 @@ except requests.exceptions.RequestException as e:
     print("Error:", e)
 
 
+# Test Update comment Database
+# request_id = "Byng_Ghassan_22-02-2023_1"
+# conversation_id = 1
+# data = {"comment": "Test"}
+# response = requests.post(f"http://127.0.0.1:8000/stt/updateComment/{conversation_id}/{request_id}", json=data)
+# print(response.json())
 
+# Test Update sender Database
+# request_id = "Byng_Ghassan_22-02-2023_1"
+# conversation_id = 1
+# data = {"sender": "Agent"}
+# response = requests.post(f"http://127.0.0.1:8000/stt/updateSender/{conversation_id}/{request_id}", json=data)
+# print(response.json())
+
+#Test Get data for org
+# org_id = "org1"
+# response = requests.get(f"http://127.0.0.1:8000/stt/requests/{org_id}")
+# response_text = response.text.replace('\\', '')
+# print(response_text)
+
+# Test Get data for req
+# req_id = "Byng_Ghassan_22-02-2023_1"
+# url = f"http://127.0.0.1:8000/stt/request/{req_id}"
+# response = requests.get(url)
+# print(response.json())
+
+# Test Delete Database
+# url = "http://127.0.0.1:8000/stt/database"
+# data = {"Request_ID": "Byng_Ghassan_22-02-2023_1"}
+# response = requests.delete(url, json=data)
+# print(response.text)

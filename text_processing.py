@@ -30,7 +30,10 @@ class TextProcessing:
         self.original_s = sentence
         self.s = " ".join(
             [
-                w.lower().strip("0123456789").strip(string.punctuation)
+                w.lower().replace("'m", " am")
+                .replace("n't", " not")
+                .replace("'s", "")
+                .replace("'ve", " have").strip("0123456789").strip(string.punctuation)
                 for w in word_tokens
                 if w.lower() not in self.stop_words
             ]
@@ -38,12 +41,6 @@ class TextProcessing:
 
     def getProcessedSentence(self):
         label = self.s
-        label = (
-            label.replace("'m", " am")
-            .replace("n't", " not")
-            .replace("'s", "")
-            .replace("'ve", " have")
-        )
 
         words = nltk.pos_tag(WhitespaceTokenizer().tokenize(label))
         processed_sentence = ""
