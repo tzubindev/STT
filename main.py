@@ -84,54 +84,6 @@ def Doc():
     return HTMLResponse(content=lines)
 
 
-@app.post("/stt/audio")
-def STT_Audio(query: AudioQuery):
-    result = None
-    sorted_word_counts = None
-    MarkedWords = None
-
-    if query.url == "testing":
-        # return {"Result": "Not Applicable."}
-        result = Transcribe(os.getcwd() + "\\test.mp3", True).getText()
-    else:
-        result = Transcribe(query.url.strip()).getText()
-
-    processed_result = TextProcessing(result)
-
-    word_counts = processed_result.getWordCounts()
-
-    sorted_word_counts = dict(
-        sorted(word_counts.items(), key=lambda x: x[1], reverse=True)
-    )
-    sorted_word_counts = dict(itertools.islice(sorted_word_counts.items(), 5))
-
-    markedObj = SensitiveWordsMarking(processed_result.getProcessedSentence())
-
-    MarkedWords = dict()
-    MarkedWords["has_sensitive_word"] = markedObj.hasSensitiveWord()
-    MarkedWords["obj"] = markedObj.getMarkedObj()
-    MarkedWords["html"] = markedObj.getMarkedHTML()
-
-    sentiment = classifier.classifySentences(result)
-
-    # if NaiveBayes().classifySentences(result) == 1:
-    #     sentiment = "Positive"
-    # else:
-    #     sentiment = "Negative"
-
-    return {
-        "id": 1,
-        "text": result,
-        "most_frequent_words": sorted_word_counts,
-        "sensitive_words": {
-            "has_senstive_word": MarkedWords["has_sensitive_word"],
-            "obj": MarkedWords["obj"],
-            "html": MarkedWords["html"],
-        },
-        "sentiment": sentiment,
-    }
-
-
 # @app.post("/stt/text")
 # def PostText(query: TextQuery):
 #     return {"response": query.string}
@@ -205,31 +157,47 @@ def AddRequest(org_id: str, query: AudioQuery):
 
         cnt += 1
 
-    final_result = [
-        request,
-        conversations,
-        words,
-    ]
-
-    # Insert words info here
-
-    # request_Record_list = []
-    # request_Record_1 = [
-    #     "",
-    #     query.url,
-    #     sentiment["Positive"],
-    #     sentiment["Negative"],
-    #     3,
-    #     "22-01-2023",
+    # final_result = [
+    #     request,
+    #     conversations,
+    #     words,
     # ]
-    # request_Record_list.append(request_Record_1)
-    # reuqest_insert_records = """INSERT INTO Request
-    #                     (Request_ID, Audio_URL, Sentiment_Distribution_Pos,
-    #                     Sentiment_Distribution_Neg, highest_Count, Date)
-    #                     VALUES (?,?,?,?,?,?)"""
-    # cursor.executemany(reuqest_insert_records, request_Record_list)
-    # conn.commit()
-    return {"response": final_result}
+
+    # Insert Data to MSSQL
+    request_list = []
+    word_list = []
+    conversation_list = []
+  
+
+    reuqest_insert_record = """INSERT INTO Request
+                        (Request_ID, Audio_URL, Sentiment_Distribution_Pos,
+                        Sentiment_Distribution_Neg, Highest_Count, Date, Org_ID)
+                        VALUES (?,?,?,?,?,?,?)"""
+    word_insert_record = """INSERT INTO Words
+                        (Word_ID, Word, IsSensitive,
+                        Word_Count, Request_ID)
+                        VALUES (?,?,?,?,?)"""
+    conversation_insert_record = """INSERT INTO Conversations
+                        (Conversation_ID, Sender, Content,
+                        Sentiment, Confidence, Comment, Request_ID)
+                        VALUES (?,?,?,?,?,?,?)"""
+    
+    request_data = [request["Request_ID"], request["Audio_URL"], request["Sentiment_Distribution_Pos"], request["Sentiment_Distribution_Neg"], request["Highest_Count"], request["Date"], request["Org_ID"]]
+    request_list.append(request_data)
+    cursor.executemany(reuqest_insert_record, request_list)
+
+    for w in words:
+        words_data = [w["Word_ID"], w["Word"], w["IsSensitive"], w["Word_Count"], w["Request_ID"]]
+        word_list.append(words_data)
+    cursor.executemany(word_insert_record, word_list)
+
+    for c in conversations:
+        conversation_data = [c["Conversation_ID"], c["Sender"], c["Content"], c["Sentiment"], c["Confidence"], c["Comment"], c["Request_ID"] ]
+        conversation_list.append(conversation_data)
+    cursor.executemany(conversation_insert_record, conversation_list)
+    
+    conn.commit()
+    return {"response": "Success"}
 
 
 @app.delete("/stt/delete")
