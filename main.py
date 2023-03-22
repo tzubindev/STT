@@ -36,6 +36,7 @@ class CommentQuery(BaseModel):
 
 class SenderQuery(BaseModel):
     sender: str = Body(...)
+    old_sender: str = Body(...)
 
 # class RequestUpdate(BaseModel):
 #     highest_Count: int = Body(...)
@@ -425,6 +426,17 @@ def updateComment(conversation_id: int, request_id: str, comment_update: Comment
 def updateSender(conversation_id: int, request_id: str, sender_update: SenderQuery):
     cursor = conn.cursor()
 
+    select_query = '''SELECT Sender FROM Conversations WHERE Request_ID= ? AND Conversation_ID=? '''
+
+    values = (request_id, conversation_id)
+
+    cursor.execute(select_query, values)
+
+    db_old_sender = cursor.fetchone()[0]
+    if sender_update.old_sender != db_old_sender:
+        conn.commit()
+        return {"response": "Error"}
+    
     update_query = '''UPDATE Conversations SET Sender = ? WHERE Request_ID= ? AND Conversation_ID=? '''
 
     values = (sender_update.sender, request_id, conversation_id)
