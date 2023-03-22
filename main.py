@@ -1,5 +1,5 @@
 from text_processing import TextProcessing
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
@@ -93,110 +93,136 @@ def Doc():
 def AddRequest(org_id: str, query: AudioQuery):
 
     result = None
+    try:
 
-    if query.url == "testing":
-        # return {"Result": "Not Applicable."}
-        result = Transcribe(os.getcwd() + "\\test.mp3", True).getResult()
-    else:
-        result = Transcribe(query.url.strip()).getResult()
+        if query.url == "testing":
+            # return {"Result": "Not Applicable."}
+            result = Transcribe(os.getcwd() + "\\test.mp3", True).getResult()
+        else:
+            result = Transcribe(query.url.strip()).getResult()
 
-    if type(result) != list:
+        if type(result) != list:
+            return {"response": "Error"}
+
+        # Result [0] = sender
+        # Result [1] = text
+        conversations = []
+        word_counts_sentence = ""
+        cnt = 1
+        request = dict()
+        request[
+            "Request_ID"
+        ] = f"{query.client_name}_{query.agent_name}_{query.date}_{query.unique_number}"
+
+        for r in result:
+            obj = {"Conversation_ID": cnt, "Sender": r[0], "Content": r[1]}
+            classifiedObj = classifier.classifySentences(r[1])
+            obj["Sentiment"] = classifiedObj["sentiment"]
+            obj["Confidence"] = classifiedObj["confidence"] * 100
+            obj["Comment"] = ""
+            obj["Request_ID"] = request["Request_ID"]
+            conversations.append(obj)
+            cnt += 1
+
+            word_counts_sentence += TextProcessing(r[1]).getProcessedSentence() + " "
+
+        word_counts = TextProcessing(word_counts_sentence).getWordCounts()
+        word_counts = dict(
+            sorted(word_counts.items(), key=lambda x: x[1], reverse=True)
+        )
+        for key, value in word_counts.items():
+            request["Highest_Count"] = value
+            break
+
+        request["Audio_URL"] = query.url
+        request["Date"] = query.date
+        request["Org_ID"] = org_id
+
+        objCnt = 0
+        posCnt = 0
+        for c in conversations:
+            posCnt += c["Sentiment"] == "Positive"
+            objCnt += 1
+
+        request["Sentiment_Distribution_Pos"] = posCnt / objCnt * 100
+        request["Sentiment_Distribution_Neg"] = (objCnt - posCnt) / objCnt * 100
+
+        words = []
+        cnt = 1
+        for key, value in word_counts.items():
+            obj = dict()
+            obj["Word_ID"] = cnt
+            obj["Word"] = key
+            obj["IsSensitive"] = SensitiveWordsMarking(key).hasSensitiveWord()
+            obj["Word_Count"] = value
+            obj["Request_ID"] = request["Request_ID"]
+            words.append(obj)
+
+            cnt += 1
+
+        # final_result = [
+        #     request,
+        #     conversations,
+        #     words,
+        # ]
+
+        # Insert Data to MSSQL
+        request_list = []
+        word_list = []
+        conversation_list = []
+
+        reuqest_insert_record = """INSERT INTO Request
+                            (Request_ID, Audio_URL, Sentiment_Distribution_Pos,
+                            Sentiment_Distribution_Neg, Highest_Count, Date, Org_ID)
+                            VALUES (?,?,?,?,?,?,?)"""
+        word_insert_record = """INSERT INTO Words
+                            (Word_ID, Word, IsSensitive,
+                            Word_Count, Request_ID)
+                            VALUES (?,?,?,?,?)"""
+        conversation_insert_record = """INSERT INTO Conversations
+                            (Conversation_ID, Sender, Content,
+                            Sentiment, Confidence, Comment, Request_ID)
+                            VALUES (?,?,?,?,?,?,?)"""
+
+        request_data = [
+            request["Request_ID"],
+            request["Audio_URL"],
+            request["Sentiment_Distribution_Pos"],
+            request["Sentiment_Distribution_Neg"],
+            request["Highest_Count"],
+            request["Date"],
+            request["Org_ID"],
+        ]
+        request_list.append(request_data)
+        cursor.executemany(reuqest_insert_record, request_list)
+
+        for w in words:
+            words_data = [
+                w["Word_ID"],
+                w["Word"],
+                w["IsSensitive"],
+                w["Word_Count"],
+                w["Request_ID"],
+            ]
+            word_list.append(words_data)
+        cursor.executemany(word_insert_record, word_list)
+
+        for c in conversations:
+            conversation_data = [
+                c["Conversation_ID"],
+                c["Sender"],
+                c["Content"],
+                c["Sentiment"],
+                c["Confidence"],
+                c["Comment"],
+                c["Request_ID"],
+            ]
+            conversation_list.append(conversation_data)
+        cursor.executemany(conversation_insert_record, conversation_list)
+
+        conn.commit()
+    except:
         return {"response": "Error"}
-
-    # Result [0] = sender
-    # Result [1] = text
-    conversations = []
-    word_counts_sentence = ""
-    cnt = 1
-    request = dict()
-    request[
-        "Request_ID"
-    ] = f"{query.client_name}_{query.agent_name}_{query.date}_{query.unique_number}"
-
-    for r in result:
-        obj = {"Conversation_ID": cnt, "Sender": r[0], "Content": r[1]}
-        classifiedObj = classifier.classifySentences(r[1])
-        obj["Sentiment"] = classifiedObj["sentiment"]
-        obj["Confidence"] = classifiedObj["confidence"] * 100
-        obj["Comment"] = ""
-        obj["Request_ID"] = request["Request_ID"]
-        conversations.append(obj)
-        cnt += 1
-
-        word_counts_sentence += TextProcessing(r[1]).getProcessedSentence() + " "
-
-    word_counts = TextProcessing(word_counts_sentence).getWordCounts()
-    word_counts = dict(sorted(word_counts.items(), key=lambda x: x[1], reverse=True))
-    for key, value in word_counts.items():
-        request["Highest_Count"] = value
-        break
-
-    request["Audio_URL"] = query.url
-    request["Date"] = query.date
-    request["Org_ID"] = org_id
-
-    objCnt = 0
-    posCnt = 0
-    for c in conversations:
-        posCnt += c["Sentiment"] == "Positive"
-        objCnt += 1
-
-    request["Sentiment_Distribution_Pos"] = posCnt / objCnt * 100
-    request["Sentiment_Distribution_Neg"] = (objCnt - posCnt) / objCnt * 100
-
-    words = []
-    cnt = 1
-    for key, value in word_counts.items():
-        obj = dict()
-        obj["Word_ID"] = cnt
-        obj["Word"] = key
-        obj["IsSensitive"] = SensitiveWordsMarking(key).hasSensitiveWord()
-        obj["Word_Count"] = value
-        obj["Request_ID"] = request["Request_ID"]
-        words.append(obj)
-
-        cnt += 1
-
-    # final_result = [
-    #     request,
-    #     conversations,
-    #     words,
-    # ]
-
-    # Insert Data to MSSQL
-    request_list = []
-    word_list = []
-    conversation_list = []
-  
-
-    reuqest_insert_record = """INSERT INTO Request
-                        (Request_ID, Audio_URL, Sentiment_Distribution_Pos,
-                        Sentiment_Distribution_Neg, Highest_Count, Date, Org_ID)
-                        VALUES (?,?,?,?,?,?,?)"""
-    word_insert_record = """INSERT INTO Words
-                        (Word_ID, Word, IsSensitive,
-                        Word_Count, Request_ID)
-                        VALUES (?,?,?,?,?)"""
-    conversation_insert_record = """INSERT INTO Conversations
-                        (Conversation_ID, Sender, Content,
-                        Sentiment, Confidence, Comment, Request_ID)
-                        VALUES (?,?,?,?,?,?,?)"""
-    
-    request_data = [request["Request_ID"], request["Audio_URL"], request["Sentiment_Distribution_Pos"], request["Sentiment_Distribution_Neg"], request["Highest_Count"], request["Date"], request["Org_ID"]]
-    request_list.append(request_data)
-    cursor.executemany(reuqest_insert_record, request_list)
-
-    for w in words:
-        words_data = [w["Word_ID"], w["Word"], w["IsSensitive"], w["Word_Count"], w["Request_ID"]]
-        word_list.append(words_data)
-    cursor.executemany(word_insert_record, word_list)
-
-    for c in conversations:
-        conversation_data = [c["Conversation_ID"], c["Sender"], c["Content"], c["Sentiment"], c["Confidence"], c["Comment"], c["Request_ID"] ]
-        conversation_list.append(conversation_data)
-    cursor.executemany(conversation_insert_record, conversation_list)
-    
-    conn.commit()
     return {"response": "Success"}
 
 
@@ -218,8 +244,16 @@ async def DeleteData(request_delete: RequestDelete):
 
 
 @app.post("/stt/updateComment/{conversation_id}/{request_id}")
-def updateComment(conversation_id: int, request_id: str, comment_update: CommentQuery):
+def updateComment(
+    conversation_id: int,
+    request_id: str,
+    comment_update: CommentQuery,
+    req: Request,
+):
     cursor = conn.cursor()
+
+    # Auth here
+    auth = req.headers["Authorization"]
 
     select_query = """SELECT Comment FROM Conversations WHERE Request_ID= ? AND Conversation_ID=? """
 
