@@ -2,13 +2,13 @@ import requests
 import json
 
 
-url = "http://127.0.0.1:8000/stt/updateComment/1/ClientA_AgentA_22-03-2023_1"
-data = {"comment": "something", "old_comment": "something old"}
-headers = {"Content-Type": "application/json", "Authorization": "asjdoqweqwknoq"}
+url = "http://127.0.0.1:8000/stt/updateSender/1/ClientA_AgentA_22-03-2023_1"
+data = {"sender": "client", "old_sender": "agent"}
+headers = {"Content-Type": "application/json", "Authorization": "asdasd8adasd"}
 
 
 response = requests.post(url, json=data, headers=headers)
-# print(response.json())
+print(response.json())
 
 with open("./result/r1.json", "w") as f:
     json.dump(response.json(), f, ensure_ascii=False, indent=4)
