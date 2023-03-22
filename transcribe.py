@@ -102,7 +102,7 @@ class Transcribe:
         result = []
 
         lastNum = 0
-        speaker = "agent"
+        speaker = "agent" if self.firstSpeakerIsAgent else "client"
         for i in ls:
             nw = [t for t in ts if (t <= i and t > lastNum)]
             lastNum = nw[len(nw) - 1]
