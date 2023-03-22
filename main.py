@@ -26,6 +26,10 @@ cursor = conn.cursor()
 
 class AudioQuery(BaseModel):
     url: str
+    client_name: str
+    agent_name: str
+    date: str
+    unique_number: int
 
 
 class TextQuery(BaseModel):
@@ -133,54 +137,99 @@ def STT_Audio(query: AudioQuery):
 #     return {"response": query.string}
 
 
-@app.post("/stt/addRequest")
-def AddRequest(query: AudioQuery):
+@app.post("/stt/addRequest/{org_id}")
+def AddRequest(org_id: str, query: AudioQuery):
 
     result = None
-    sorted_word_counts = None
-    MarkedWords = None
 
     if query.url == "testing":
         # return {"Result": "Not Applicable."}
-        result = Transcribe(os.getcwd() + "\\test.mp3", True).getText()
+        result = Transcribe(os.getcwd() + "\\test.mp3", True).getResult()
     else:
-        result = Transcribe(query.url.strip()).getText()
+        result = Transcribe(query.url.strip()).getResult()
 
-    processed_result = TextProcessing(result)
+    if type(result) != list:
+        return {"response": "Error"}
 
-    word_counts = processed_result.getWordCounts()
+    # Result [0] = sender
+    # Result [1] = text
+    conversations = []
+    word_counts_sentence = ""
+    cnt = 1
+    request = dict()
+    request[
+        "Request_ID"
+    ] = f"{query.client_name}_{query.agent_name}_{query.date}_{query.unique_number}"
 
-    sorted_word_counts = dict(
-        sorted(word_counts.items(), key=lambda x: x[1], reverse=True)
-    )
-    sorted_word_counts = dict(itertools.islice(sorted_word_counts.items(), 5))
+    for r in result:
+        obj = {"Conversation_ID": cnt, "Sender": r[0], "Content": r[1]}
+        classifiedObj = classifier.classifySentences(r[1])
+        obj["Sentiment"] = classifiedObj["sentiment"]
+        obj["Confidence"] = classifiedObj["confidence"] * 100
+        obj["Comment"] = ""
+        obj["Request_ID"] = request["Request_ID"]
+        conversations.append(obj)
+        cnt += 1
 
-    markedObj = SensitiveWordsMarking(processed_result.getProcessedSentence())
+        word_counts_sentence += TextProcessing(r[1]).getProcessedSentence() + " "
 
-    MarkedWords = dict()
-    MarkedWords["has_sensitive_word"] = markedObj.hasSensitiveWord()
-    MarkedWords["obj"] = markedObj.getMarkedObj()
-    MarkedWords["html"] = markedObj.getMarkedHTML()
+    word_counts = TextProcessing(word_counts_sentence).getWordCounts()
+    word_counts = dict(sorted(word_counts.items(), key=lambda x: x[1], reverse=True))
+    for key, value in word_counts.items():
+        request["Highest_Count"] = value
+        break
 
-    sentiment = classifier.classifySentences(result)
+    request["Audio_URL"] = query.url
+    request["Date"] = query.date
+    request["Org_ID"] = org_id
 
-    request_Record_list = []
-    request_Record_1 = [
-        "",
-        query.url,
-        sentiment["Positive"],
-        sentiment["Negative"],
-        3,
-        "22-01-2023",
+    objCnt = 0
+    posCnt = 0
+    for c in conversations:
+        posCnt += c["Sentiment"] == "Positive"
+        objCnt += 1
+
+    request["Sentiment_Distribution_Pos"] = posCnt / objCnt * 100
+    request["Sentiment_Distribution_Neg"] = (objCnt - posCnt) / objCnt * 100
+
+    words = []
+    cnt = 1
+    for key, value in word_counts.items():
+        obj = dict()
+        obj["Word_ID"] = cnt
+        obj["Word"] = key
+        obj["IsSensitive"] = SensitiveWordsMarking(key).hasSensitiveWord()
+        obj["Word_Count"] = value
+        obj["Request_ID"] = request["Request_ID"]
+        words.append(obj)
+
+        cnt += 1
+
+    final_result = [
+        request,
+        conversations,
+        words,
     ]
-    request_Record_list.append(request_Record_1)
-    reuqest_insert_records = """INSERT INTO Request 
-                        (Request_ID, Audio_URL, Sentiment_Distribution_Pos, 
-                        Sentiment_Distribution_Neg, highest_Count, Date) 
-                        VALUES (?,?,?,?,?,?)"""
-    cursor.executemany(reuqest_insert_records, request_Record_list)
-    conn.commit()
-    return {"response": query.url}
+
+    # Insert words info here
+
+    # request_Record_list = []
+    # request_Record_1 = [
+    #     "",
+    #     query.url,
+    #     sentiment["Positive"],
+    #     sentiment["Negative"],
+    #     3,
+    #     "22-01-2023",
+    # ]
+    # request_Record_list.append(request_Record_1)
+    # reuqest_insert_records = """INSERT INTO Request
+    #                     (Request_ID, Audio_URL, Sentiment_Distribution_Pos,
+    #                     Sentiment_Distribution_Neg, highest_Count, Date)
+    #                     VALUES (?,?,?,?,?,?)"""
+    # cursor.executemany(reuqest_insert_records, request_Record_list)
+    # conn.commit()
+    return {"response": final_result}
 
 
 @app.delete("/stt/delete")

@@ -2,6 +2,8 @@ import subprocess
 import whisper
 import requests
 import os
+from os import path
+from pydub import AudioSegment
 
 from textblob import TextBlob
 
@@ -66,12 +68,19 @@ class Transcribe:
         )
         import audioSegmentation as aS
 
+        sound = AudioSegment.from_file(self.audio_file)
+        new_file = self.audio_file.replace(".mp3", ".wav")
+        sound.set_frame_rate(16000).set_channels(1).export(new_file, format="wav")
+
         (
             speaker_marking,
             duration_arr,
             purity_cluster_m,
             purity_speaker_m,
-        ) = aS.speaker_diarization(self.audio_file, 2)
+        ) = aS.speaker_diarization(new_file, 2)
+
+        if os.path.exists(new_file):
+            os.remove(new_file)
 
         list_of_timestamps = []
         curNum = -1

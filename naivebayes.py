@@ -55,33 +55,13 @@ class NaiveBayes:
     def getClassifier(self):
         return self.cl
 
-    def classifySentences(self, sentences):
-        sentiments = []
+    def classifySentences(self, sentence):
 
-        blob= TextBlob(sentences)
+        result = self.cl.classify(sentence)
+        confidence = self.cl.prob_classify(sentence).prob(result)
+        result = "Positive" if result else "Negative"
 
-        for s in blob.sentences:
-
-            sentiments.append(
-                self.cl.classify(TextProcessing(str(s)).getProcessedSentence())
-            )
-        positiveCounter = 0
-        negativeCounter = 0
-        counter = 0
-        for n in sentiments:
-            counter +=1
-
-
-        for n in sentiments:
-            if n == 1:
-                positiveCounter += 1
-            else:
-                negativeCounter += 1
-
-        positivePercent = positiveCounter / counter
-        negativePercent = negativeCounter / counter
-
-        return {"Negative": negativePercent, "Positive": positivePercent}
+        return {"sentiment": result, "confidence": confidence}
 
 
 # Analysis Purpose
