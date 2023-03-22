@@ -9,4 +9,4 @@
 /.env
 __pycache__/
 *.py[cod]
-ptAudioAnalysis
+pyAudioAnalysis/
