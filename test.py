@@ -27,21 +27,21 @@ with open("./output/test.html", "w") as f:
 directory = os.getcwd()
 webbrowser.open(directory + "/output/test.html")
 
-url = "http://127.0.0.1:8000/stt/text"
-textData = {"string": "very long text asdsadasdsasadds"} 
-try:
-    response = requests.post(url, data=json.dumps(textData))
-    print("Response body:", response.json())
-except requests.exceptions.RequestException as e:
-    print("Error:", e)
+# url = "http://127.0.0.1:8000/stt/text"
+# textData = {"string": "very long text asdsadasdsasadds"} 
+# try:
+#     response = requests.post(url, data=json.dumps(textData))
+#     print("Response body:", response.json())
+# except requests.exceptions.RequestException as e:
+#     print("Error:", e)
 
 
 # Test Update comment Database
-# request_id = "Byng_Ghassan_22-02-2023_1"
-# conversation_id = 1
-# data = {"comment": "Test"}
-# response = requests.post(f"http://127.0.0.1:8000/stt/updateComment/{conversation_id}/{request_id}", json=data)
-# print(response.json())
+request_id = "client_agent_20-02-2023_1"
+conversation_id = 1
+data = {"comment": "Test"}
+response = requests.post(f"http://127.0.0.1:8000/stt/updateComment/{conversation_id}/{request_id}", json=data)
+print(response.json())
 
 # Test Update sender Database
 # request_id = "Byng_Ghassan_22-02-2023_1"

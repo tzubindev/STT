@@ -1,0 +1,11 @@
+pyodbc 
+requests 
+python-dotenv 
+fastapi
+pydantic
+textblob
+nltk
+regex
+numpy
+matplotlib
+#spacy and Whisper
