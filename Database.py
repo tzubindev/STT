@@ -27,7 +27,7 @@ cursor.execute('''
             Audio_URL varchar(2048) NOT NULL,
             Sentiment_Distribution_Pos float NOT NULL,
             Sentiment_Distribution_Neg float NOT NULL,
-            highest_Count int NOT NULL,
+            Highest_Count int NOT NULL,
             Date varchar(10) NOT NULL,
 	        UNIQUE (Request_ID),
 	        PRIMARY KEY (Request_ID),
@@ -42,8 +42,7 @@ cursor.execute('''
             IsSensitive bit NOT NULL,
             Word_Count int NOT NULL,
             Request_ID varchar(255) FOREIGN KEY REFERENCES Request(Request_ID),
-            UNIQUE (Word_ID),
-            PRIMARY KEY (Word_ID)
+            PRIMARY KEY (Word_ID, Request_ID)
 		)
 ''')
 
@@ -56,8 +55,7 @@ cursor.execute('''
             Confidence float NOT NULL,
             Comment varchar(max) DEFAULT '',
             Request_ID varchar(255) FOREIGN KEY REFERENCES Request(Request_ID),
-            UNIQUE (Conversation_ID),
-            PRIMARY KEY (Conversation_ID),
+            PRIMARY KEY (Conversation_ID, Request_ID)
 		)
 ''')
 conn.commit()
