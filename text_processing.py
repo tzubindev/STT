@@ -24,16 +24,19 @@ for tag in data:
 
 class TextProcessing:
     def __init__(self, sentence) -> None:
-        # nltk.download("stopwords")
+        nltk.download("stopwords")
         self.stop_words = set(stopwords.words("english"))
         word_tokens = word_tokenize(sentence)
         self.original_s = sentence
         self.s = " ".join(
             [
-                w.lower().replace("'m", " am")
+                w.lower()
+                .replace("'m", " am")
                 .replace("n't", " not")
                 .replace("'s", "")
-                .replace("'ve", " have").strip("0123456789").strip(string.punctuation)
+                .replace("'ve", " have")
+                .strip("0123456789")
+                .strip(string.punctuation)
                 for w in word_tokens
                 if w.lower() not in self.stop_words
             ]

@@ -14,6 +14,7 @@ from fastapi import Body
 from dotenv import dotenv_values
 import os
 import itertools
+import uvicorn
 
 config = dotenv_values(".env")
 connection_string = f"DRIVER={{SQL Server}};SERVER={config['SERVER']};DATABASE={config['DATABASE']};UID={config['USERNAME']};PWD={config['PASSWORD']}"
