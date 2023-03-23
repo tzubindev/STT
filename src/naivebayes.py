@@ -50,7 +50,7 @@ class NaiveBayes:
         # training_data = data[:1]
         training_data = data
 
-        self.cl = NaiveBayesClassifier.train(training_data)
+        self.cl = NaiveBayesClassifier(training_data)
 
     def getClassifier(self):
         return self.cl
@@ -58,7 +58,7 @@ class NaiveBayes:
     def classifySentences(self, sentence):
 
         result = self.cl.classify(sentence)
-        confidence = self.cl.prob_classify(sentence).prob(result)
+        confidence = round(self.cl.prob_classify(sentence).prob(result), 2)
         result = "Positive" if result else "Negative"
 
         return {"sentiment": result, "confidence": confidence}
