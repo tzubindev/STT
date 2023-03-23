@@ -46,6 +46,7 @@ class SenderQuery(BaseModel):
     sender: str = Body(...)
     old_sender: str = Body(...)
 
+
 class DeleteQuery(BaseModel):
     old_comment: str = Body(...)
 
@@ -249,7 +250,7 @@ def updateComment(
     select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
     cursor.execute(select_query, auth)
     db_token_id = cursor.fetchone()
-    if  db_token_id is None:
+    if db_token_id is None:
         return {"response": "Error"}
     else:
         select_query = """SELECT Comment FROM Conversations WHERE Request_ID= ? AND Conversation_ID=? """
