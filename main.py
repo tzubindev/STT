@@ -46,9 +46,8 @@ class SenderQuery(BaseModel):
     sender: str = Body(...)
     old_sender: str = Body(...)
 
-
-# class RequestUpdate(BaseModel):
-#     highest_Count: int = Body(...)
+class DeleteQuery(BaseModel):
+    old_comment: str = Body(...)
 
 
 class RequestDelete(BaseModel):
@@ -236,10 +235,13 @@ def AddRequest(org_id: str, query: AudioQuery, req: Request):
     return {"response": "Success"}
 
 
-@app.delete("/stt/delete")
-async def DeleteData(request_delete: RequestDelete, req: Request):
-
-    conn.autocommit = False
+@app.post("/stt/deleteComment/{conversation_id}/{request_id}")
+def updateComment(
+    conversation_id: int,
+    request_id: str,
+    delete_comment: DeleteQuery,
+    req: Request,
+):
     cursor = conn.cursor()
 
     # Auth here
@@ -247,18 +249,29 @@ async def DeleteData(request_delete: RequestDelete, req: Request):
     select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
     cursor.execute(select_query, auth)
     db_token_id = cursor.fetchone()
-    if db_token_id is None:
+    if  db_token_id is None:
         return {"response": "Error"}
     else:
-        delete_query = """DELETE FROM Request WHERE Request_ID=?"""
+        select_query = """SELECT Comment FROM Conversations WHERE Request_ID= ? AND Conversation_ID=? """
 
-        value = request_delete.Request_ID
+        values = (request_id, conversation_id)
 
-        cursor.execute(delete_query, value)
+        cursor.execute(select_query, values)
+
+        db_old_comment = cursor.fetchone()[0]
+        if delete_comment.old_comment != db_old_comment:
+            conn.commit()
+            return {"response": "Error"}
+
+        update_query = """UPDATE Conversations SET Comment = '' WHERE Request_ID= ? AND Conversation_ID=? """
+
+        values = (request_id, conversation_id)
+
+        cursor.execute(update_query, values)
 
         conn.commit()
 
-        return {"message": "Data deleted successfully."}
+        return {"response": "Success"}
 
 
 @app.post("/stt/updateComment/{conversation_id}/{request_id}")
