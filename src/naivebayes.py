@@ -2,7 +2,7 @@ from textblob.classifiers import NaiveBayesClassifier
 from textblob import TextBlob
 import random
 import math
-from text_processing import TextProcessing
+from src.text_processing import TextProcessing
 import time
 
 # start_time = time.time()
@@ -50,7 +50,7 @@ class NaiveBayes:
         # training_data = data[:1]
         training_data = data
 
-        self.cl = NaiveBayesClassifier(training_data)
+        self.cl = NaiveBayesClassifier.train(training_data)
 
     def getClassifier(self):
         return self.cl

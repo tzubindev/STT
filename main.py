@@ -1,11 +1,11 @@
-from text_processing import TextProcessing
+from src.text_processing import TextProcessing
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
-from sensitive_words_marking import SensitiveWordsMarking
-from transcribe import Transcribe
-from naivebayes import NaiveBayes
+from src.sensitive_words_marking import SensitiveWordsMarking
+from src.transcribe import Transcribe
+from src.naivebayes import NaiveBayes
 from textblob import TextBlob
 import pyodbc as odcb
 import json
@@ -14,7 +14,6 @@ from fastapi import Body
 from dotenv import dotenv_values
 import os
 import itertools
-import uvicorn
 
 config = dotenv_values(".env")
 connection_string = f"DRIVER={{SQL Server}};SERVER={config['SERVER']};DATABASE={config['DATABASE']};UID={config['USERNAME']};PWD={config['PASSWORD']}"
