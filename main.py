@@ -94,12 +94,12 @@ def AddRequest(org_id: str, query: AudioQuery, req: Request):
 
     result = None
     try:
- # Auth here
+        # Auth here
         auth = req.headers["Authorization"]
         select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
         cursor.execute(select_query, auth)
         db_token_id = cursor.fetchone()
-        if  db_token_id is None:
+        if db_token_id is None:
             return {"response": "Error"}
         else:
             if query.url == "testing":
@@ -131,7 +131,9 @@ def AddRequest(org_id: str, query: AudioQuery, req: Request):
                 conversations.append(obj)
                 cnt += 1
 
-                word_counts_sentence += TextProcessing(r[1]).getProcessedSentence() + " "
+                word_counts_sentence += (
+                    TextProcessing(r[1]).getProcessedSentence() + " "
+                )
 
             word_counts = TextProcessing(word_counts_sentence).getWordCounts()
             word_counts = dict(
@@ -239,13 +241,12 @@ async def DeleteData(request_delete: RequestDelete, req: Request):
     conn.autocommit = False
     cursor = conn.cursor()
 
-    
     # Auth here
     auth = req.headers["Authorization"]
     select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
     cursor.execute(select_query, auth)
     db_token_id = cursor.fetchone()
-    if  db_token_id is None:
+    if db_token_id is None:
         return {"response": "Error"}
     else:
         delete_query = """DELETE FROM Request WHERE Request_ID=?"""
@@ -273,7 +274,7 @@ def updateComment(
     select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
     cursor.execute(select_query, auth)
     db_token_id = cursor.fetchone()
-    if  db_token_id is None:
+    if db_token_id is None:
         return {"response": "Error"}
     else:
         select_query = """SELECT Comment FROM Conversations WHERE Request_ID= ? AND Conversation_ID=? """
@@ -296,11 +297,12 @@ def updateComment(
         conn.commit()
 
         return {"response": "Success"}
-        
 
 
 @app.post("/stt/updateSender/{conversation_id}/{request_id}")
-def updateSender(conversation_id: int, request_id: str, sender_update: SenderQuery, req: Request):
+def updateSender(
+    conversation_id: int, request_id: str, sender_update: SenderQuery, req: Request
+):
 
     cursor = conn.cursor()
 
@@ -309,7 +311,7 @@ def updateSender(conversation_id: int, request_id: str, sender_update: SenderQue
     select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
     cursor.execute(select_query, auth)
     db_token_id = cursor.fetchone()
-    if  db_token_id is None:
+    if db_token_id is None:
         return {"response": "Error"}
     else:
         select_query = """SELECT Sender FROM Conversations WHERE Request_ID= ? AND Conversation_ID=? """
@@ -338,7 +340,7 @@ def updateSender(conversation_id: int, request_id: str, sender_update: SenderQue
 async def ReturnRequests(org_id: str, req: Request):
 
     cursor = conn.cursor()
-
+    print(req.headers)
     auth = req.headers["Authorization"]
 
     select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
@@ -346,7 +348,7 @@ async def ReturnRequests(org_id: str, req: Request):
 
     db_token_id = cursor.fetchone()
 
-    if  db_token_id is None:
+    if db_token_id is None:
         return {"response": "Error"}
     else:
         cursor.execute("SELECT Request_ID FROM Request WHERE Org_ID = ? ", org_id)
@@ -371,7 +373,7 @@ async def STT_Test(req_id: str, req: Request):
 
     db_token_id = cursor.fetchone()
 
-    if  db_token_id is None:
+    if db_token_id is None:
         return {"response": "Error"}
     else:
         cursor.execute("SELECT * FROM Request WHERE Request_ID = ? ", req_id)

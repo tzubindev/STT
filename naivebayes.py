@@ -47,8 +47,8 @@ class NaiveBayes:
 
         data = [(sentence, processed_data[sentence]) for sentence in processed_data]
         random.shuffle(data)
-        training_data = data[:1]
-        # training_data = data
+        # training_data = data[:1]
+        training_data = data
 
         self.cl = NaiveBayesClassifier(training_data)
 
