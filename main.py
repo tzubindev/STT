@@ -20,10 +20,16 @@ from naivebayes import NaiveBayes
 
 
 config = dotenv_values(".env")
-connection_string = f"DRIVER={{SQL Server}};SERVER={config['SERVER']};DATABASE={config['DATABASE']};UID={config['USERNAME']};PWD={config['PASSWORD']}"
+# connection_string = f"DRIVER={{SQL Server}};SERVER={config['SERVER']};DATABASE={config['DATABASE']};UID={config['USERNAME']};PWD={config['PASSWORD']}"
 
 # Create the connection to SQL SERVER
-conn = pymssql.connect(connection_string)
+conn = pymssql.connect(
+    host="config['DATABASE']",
+    server=config["SERVER"],
+    port="1435",
+    user=config["USERNAME"],
+    password=config["PASSWORD"],
+)
 
 cursor = conn.cursor()
 
