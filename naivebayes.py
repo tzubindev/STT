@@ -2,7 +2,7 @@ from textblob.classifiers import NaiveBayesClassifier
 from textblob import TextBlob
 import random
 import math
-from src.text_processing import TextProcessing
+from text_processing import TextProcessing
 import time
 
 # start_time = time.time()

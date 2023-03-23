@@ -1,25 +1,29 @@
-from src.text_processing import TextProcessing
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
-from src.sensitive_words_marking import SensitiveWordsMarking
-from src.transcribe import Transcribe
-from src.naivebayes import NaiveBayes
 from textblob import TextBlob
-import pyodbc as odcb
-import json
-import collections
 from fastapi import Body
 from dotenv import dotenv_values
-import os
+
 import itertools
+import collections
+import sys
+import os
+import pymssql
+import json
+
+from text_processing import TextProcessing
+from sensitive_words_marking import SensitiveWordsMarking
+from transcribe import Transcribe
+from naivebayes import NaiveBayes
+
 
 config = dotenv_values(".env")
 connection_string = f"DRIVER={{SQL Server}};SERVER={config['SERVER']};DATABASE={config['DATABASE']};UID={config['USERNAME']};PWD={config['PASSWORD']}"
 
 # Create the connection to SQL SERVER
-conn = odcb.connect(connection_string)
+conn = pymssql.connect(connection_string)
 
 cursor = conn.cursor()
 
