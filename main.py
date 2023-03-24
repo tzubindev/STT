@@ -20,25 +20,25 @@ from transcribe import Transcribe
 from naivebayes import NaiveBayes
 
 
-# config = dotenv_values(".env")
+config = dotenv_values(".env")
 # connection_string = f"DRIVER={{SQL Server}};HOST={config['SERVER']};DATABASE={config['DATABASE']};UID={config['USERNAME']};PWD={config['PASSWORD']}"
 
 # Create the connection to SQL SERVER
-# conn = pymssql.connect(
-#     server=config["SERVER"],
-#     database=config['DATABASE'],
-#     port=config["PORT"],
-#     user=config["USERNAME"],
-#     password=config["PASSWORD"],
-# )
+conn = pymssql.connect(
+    server=config["SERVER"],
+    database=config['DATABASE'],
+    port=config["PORT"],
+    user=config["USERNAME"],
+    password=config["PASSWORD"],
+)
 # conn = pymssql.connect(
 #     connection_string
 # )
-# cursor = conn.cursor()
+cursor = conn.cursor()
 
-# nltk.download('punkt')
-# nltk.download('averaged_perceptron_tagger')
-# nltk.download('wordnet')
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
 
 
 class AudioQuery(BaseModel):
@@ -107,12 +107,11 @@ def AddRequest(org_id: str, query: AudioQuery, req: Request):
     result = None
 
     # Auth here
-    # auth = req.headers["Authorization"]
-    # select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
-    # # cursor.execute(select_query, auth)
-    # # db_token_id = # cursor.fetchone()
+    auth = req.headers["Authorization"]
+    cursor.execute("SELECT Token_ID FROM Authorisation WHERE Token_ID= %s", auth)
+    db_token_id =  cursor.fetchone()
 
-    db_token_id = True  # REMEBER TO COMMENT THISSSSSS
+    # db_token_id = True  # REMEBER TO COMMENT THISSSSSS
     if db_token_id is None:
         return {"response": "Token Error"}
     else:
@@ -187,97 +186,80 @@ def AddRequest(org_id: str, query: AudioQuery, req: Request):
         word_list = []
         conversation_list = []
 
-        reuqest_insert_record = """INSERT INTO Request
-                            (Request_ID, Audio_URL, Sentiment_Distribution_Pos,
-                            Sentiment_Distribution_Neg, Highest_Count, Date, Org_ID)
-                            VALUES (?,?,?,?,?,?,?)"""
-        word_insert_record = """INSERT INTO Words
-                            (Word_ID, Word, IsSensitive,
-                            Word_Count, Request_ID)
-                            VALUES (?,?,?,?,?)"""
-        conversation_insert_record = """INSERT INTO Conversations
-                            (Conversation_ID, Sender, Content,
-                            Sentiment, Confidence, Comment, Request_ID)
-                            VALUES (?,?,?,?,?,?,?)"""
-
         request_data = [
-            request["Request_ID"],
+            (request["Request_ID"],
             request["Audio_URL"],
             request["Sentiment_Distribution_Pos"],
             request["Sentiment_Distribution_Neg"],
             request["Highest_Count"],
             request["Date"],
-            request["Org_ID"],
+            request["Org_ID"])
         ]
 
-        # cursor.executemany("INSERT INTO Request (Request_ID, Audio_URL, Sentiment_Distribution_Pos, Sentiment_Distribution_Neg, Highest_Count, Date, Org_ID) VALUES (%s,%s,%f,%f,%d,%s,%s)", tuple(request_data))
+        cursor.executemany("INSERT INTO Request (Request_ID, Audio_URL, Sentiment_Distribution_Pos, Sentiment_Distribution_Neg, Highest_Count, Date, Org_ID) VALUES (%s,%s,%s,%s,%d,%s,%s)", request_data)
 
         for w in words:
-            words_data = [
+            words_data = (
                 w["Word_ID"],
                 w["Word"],
                 w["IsSensitive"],
                 w["Word_Count"],
-                w["Request_ID"],
-            ]
+                w["Request_ID"]
+            )
             word_list.append(words_data)
-        # cursor.executemany("INSERT INTO Words (Word_ID, Word, IsSensitive, Word_Count, Request_ID) VALUES (%d,%s,%i,%d,%s)", tuple(word_list))
+
+        cursor.executemany("INSERT INTO Words (Word_ID, Word, IsSensitive, Word_Count, Request_ID) VALUES (%d,%s,%d,%d,%s)", word_list)
 
         for c in conversations:
-            conversation_data = [
+            conversation_data = ( 
                 c["Conversation_ID"],
                 c["Sender"],
                 c["Content"],
                 c["Sentiment"],
                 c["Confidence"],
                 c["Comment"],
-                c["Request_ID"],
-            ]
+                c["Request_ID"]
+                )
             conversation_list.append(conversation_data)
-        # cursor.executemany("INSERT INTO Conversations (Conversation_ID, Sender, Content, Sentiment, Confidence, Comment, Request_ID) VALUES (%d,%s,%s,%s,%f,%s,%s)", tuple(conversation_list))
 
-        # conn.commit()
+        cursor.executemany("INSERT INTO Conversations (Conversation_ID, Sender, Content, Sentiment, Confidence, Comment, Request_ID) VALUES (%d,%s,%s,%s,%s,%s,%s)", conversation_list)
+
+        conn.commit()
 
     return {"response": "Success"}
 
 
 @app.post("/stt/deleteComment/{conversation_id}/{request_id}")
-def updateComment(
+def deleteComment(
     conversation_id: int,
     request_id: str,
     delete_comment: DeleteQuery,
     req: Request,
 ):
-    # cursor = # conn.# cursor()
-
     # Auth here
     auth = req.headers["Authorization"]
-    select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
-    # cursor.execute(select_query, auth)
-    # db_token_id = # cursor.fetchone()
-    db_token_id = True
+    cursor.execute("SELECT Token_ID FROM Authorisation WHERE Token_ID= %s", auth)
+    db_token_id = cursor.fetchone()
+    # db_token_id = True
     if db_token_id is None:
         return {"response": "Error"}
     else:
-        select_query = """SELECT Comment FROM Conversations WHERE Request_ID= ? AND Conversation_ID=? """
-
         values = (request_id, conversation_id)
 
-        # cursor.execute(select_query, values)
+        cursor.execute("SELECT Comment FROM Conversations WHERE Request_ID= %s AND Conversation_ID=%d ", values)
 
-        # db_old_comment = # cursor.fetchone()[0]
-        db_old_comment = True
+        db_old_comment = cursor.fetchone()[0]
+        # db_old_comment = True
         if delete_comment.old_comment != db_old_comment:
-            # conn.commit()
+            conn.commit()
             return {"response": "Error"}
 
-        update_query = """UPDATE Conversations SET Comment = '' WHERE Request_ID= ? AND Conversation_ID=? """
 
         values = (request_id, conversation_id)
 
-        # cursor.execute(update_query, values)
+        cursor.execute("UPDATE Conversations SET Comment = '' WHERE Request_ID= %s AND Conversation_ID=%d ", values)
 
-        # conn.commit()
+        conn.commit()
 
         return {"response": "Success"}
 
@@ -289,36 +271,29 @@ def updateComment(
     comment_update: CommentQuery,
     req: Request,
 ):
-    # cursor = conn.cursor()
-
     # Auth here
     auth = req.headers["Authorization"]
-    select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
-    # cursor.execute(select_query, auth)
-    # db_token_id = # cursor.fetchone()
-    db_token_id = True
+    cursor.execute("SELECT Token_ID FROM Authorisation WHERE Token_ID= %s", auth)
+    db_token_id = cursor.fetchone()
+    # db_token_id = True
     if db_token_id is None:
         return {"response": "Error"}
     else:
-        select_query = """SELECT Comment FROM Conversations WHERE Request_ID= ? AND Conversation_ID=? """
-
         values = (request_id, conversation_id)
 
-        # cursor.execute(select_query, values)
+        cursor.execute("SELECT Comment FROM Conversations WHERE Request_ID= %s AND Conversation_ID=%d ", values)
 
-        # db_old_comment = cursor.fetchone()[0]
-        db_old_comment = 1
+        db_old_comment = cursor.fetchone()[0]
+
         if comment_update.old_comment != db_old_comment:
-            # conn.commit()
+            conn.commit()
             return {"response": "Error"}
-
-        update_query = """UPDATE Conversations SET Comment = ? WHERE Request_ID= ? AND Conversation_ID=? """
 
         values = (comment_update.comment, request_id, conversation_id)
 
-        # cursor.execute(update_query, values)
+        cursor.execute("UPDATE Conversations SET Comment = %s WHERE Request_ID= %s AND Conversation_ID= %d ", values)
 
-        # conn.commit()
+        conn.commit()
 
         return {"response": "Success"}
 
@@ -327,37 +302,29 @@ def updateComment(
 def updateSender(
     conversation_id: int, request_id: str, sender_update: SenderQuery, req: Request
 ):
-
-    # cursor = # conn.# cursor()
-
     # Auth here
     auth = req.headers["Authorization"]
-    select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
-    # cursor.execute(select_query, auth)
-    # db_token_id = # cursor.fetchone()
-    db_token_id = True
+    cursor.execute("SELECT Token_ID FROM Authorisation WHERE Token_ID= %s", auth)
+    db_token_id = cursor.fetchone()
+    # db_token_id = True
     if db_token_id is None:
         return {"response": "Error"}
     else:
-        select_query = """SELECT Sender FROM Conversations WHERE Request_ID= ? AND Conversation_ID=? """
-
         values = (request_id, conversation_id)
 
-        # cursor.execute(select_query, values)
+        cursor.execute("SELECT Sender FROM Conversations WHERE Request_ID= %s AND Conversation_ID=%d", values)
 
-        # db_old_sender = cursor.fetchone()[0]
-        db_old_sender = 1
+        db_old_sender = cursor.fetchone()[0]
+        # db_old_sender = 1
         if sender_update.old_sender != db_old_sender:
-            # conn.commit()
+            conn.commit()
             return {"response": "Error"}
-
-        update_query = """UPDATE Conversations SET Sender = ? WHERE Request_ID= ? AND Conversation_ID=? """
 
         values = (sender_update.sender, request_id, conversation_id)
 
-        # cursor.execute(update_query, values)
+        cursor.execute("UPDATE Conversations SET Sender = %s WHERE Request_ID= %s AND Conversation_ID= %d", values)
 
-        # conn.commit()
+        conn.commit()
 
         return {"response": "Updated Successfully"}
 
@@ -365,22 +332,19 @@ def updateSender(
 @app.get("/stt/requests/{org_id}")
 async def ReturnRequests(org_id: str, req: Request):
 
-    # cursor = # conn.# cursor()
     print(req.headers)
     auth = req.headers["Authorization"]
+    cursor.execute("SELECT Token_ID FROM Authorisation WHERE Token_ID= %s", auth)
 
-    select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
-    # cursor.execute(select_query, auth)
+    db_token_id = cursor.fetchone()
 
-    # db_token_id = # cursor.fetchone()
-
-    db_token_id = True
+    # db_token_id = True
     if db_token_id is None:
         return {"response": "Error"}
     else:
-        # cursor.execute("SELECT Request_ID FROM Request WHERE Org_ID = ? ", org_id)
-        # rows = # cursor.fetchall()
-        rows = 1
+        cursor.execute("SELECT Request_ID FROM Request WHERE Org_ID = %s", org_id)
+        rows = cursor.fetchall()
+        # rows = 1
         RequestList = []
         for row in rows:
             data = row[0]
@@ -393,21 +357,18 @@ async def ReturnRequests(org_id: str, req: Request):
 
 @app.get("/stt/request/{req_id}")
 async def STT_Test(req_id: str, req: Request):
-    # cursor = # conn.# cursor()
+
     auth = req.headers["Authorization"]
+    cursor.execute("SELECT Token_ID FROM Authorisation WHERE Token_ID= %s", auth)
 
-    select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
-    # cursor.execute(select_query, auth)
+    db_token_id = cursor.fetchone()
 
-    # db_token_id = # cursor.fetchone()
-
-    db_token_id = True
+    # db_token_id = True
     if db_token_id is None:
         return {"response": "Error"}
     else:
-        # cursor.execute("SELECT * FROM Request WHERE Request_ID = ? ", req_id)
-        rows = 1  # cursor.fetchall()
-
+        cursor.execute("SELECT * FROM Request WHERE Request_ID = %s", req_id)
+        rows = cursor.fetchall()
         for row in rows:
             data = {
                 "request_id": row[0],
@@ -416,8 +377,8 @@ async def STT_Test(req_id: str, req: Request):
                 "date": row[5],
             }
 
-        # cursor.execute("SELECT * FROM Words WHERE Request_ID = ? ", req_id)
-        rows = 1  # cursor.fetchall()
+        cursor.execute("SELECT * FROM Words WHERE Request_ID = %s ", req_id)
+        rows = cursor.fetchall()
         objects_list = []
         for row in rows:
             object_dict = {
@@ -430,8 +391,8 @@ async def STT_Test(req_id: str, req: Request):
             }
             objects_list.append(object_dict)
 
-        # cursor.execute("SELECT * FROM Conversations WHERE Request_ID = ? ", req_id)
-        rows = 1  # cursor.fetchall()
+        cursor.execute("SELECT * FROM Conversations WHERE Request_ID = %s ", req_id)
+        rows = cursor.fetchall()
         objects_list1 = []
         for row in rows:
             object_dict = {
