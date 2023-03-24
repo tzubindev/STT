@@ -12,6 +12,7 @@ import sys
 import os
 import pymssql
 import json
+import nltk
 
 from text_processing import TextProcessing
 from sensitive_words_marking import SensitiveWordsMarking
@@ -19,19 +20,25 @@ from transcribe import Transcribe
 from naivebayes import NaiveBayes
 
 
-config = dotenv_values(".env")
-# connection_string = f"DRIVER={{SQL Server}};SERVER={config['SERVER']};DATABASE={config['DATABASE']};UID={config['USERNAME']};PWD={config['PASSWORD']}"
+# config = dotenv_values(".env")
+# connection_string = f"DRIVER={{SQL Server}};HOST={config['SERVER']};DATABASE={config['DATABASE']};UID={config['USERNAME']};PWD={config['PASSWORD']}"
 
 # Create the connection to SQL SERVER
-conn = pymssql.connect(
-    host="config['DATABASE']",
-    server=config["SERVER"],
-    port="1435",
-    user=config["USERNAME"],
-    password=config["PASSWORD"],
-)
+# conn = pymssql.connect(
+#     server=config["SERVER"],
+#     database=config['DATABASE'],
+#     port=config["PORT"],
+#     user=config["USERNAME"],
+#     password=config["PASSWORD"],
+# )
+# conn = pymssql.connect(
+#     connection_string
+# )
+# cursor = conn.cursor()
 
-cursor = conn.cursor()
+# nltk.download('punkt')
+# nltk.download('averaged_perceptron_tagger')
+# nltk.download('wordnet')
 
 
 class AudioQuery(BaseModel):
@@ -94,154 +101,143 @@ def Doc():
     return HTMLResponse(content=lines)
 
 
-# @app.post("/stt/text")
-# def PostText(query: TextQuery):
-#     return {"response": query.string}
-
-
 @app.post("/stt/addRequest/{org_id}")
 def AddRequest(org_id: str, query: AudioQuery, req: Request):
 
     result = None
-    try:
-        # Auth here
-        auth = req.headers["Authorization"]
-        select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
-        cursor.execute(select_query, auth)
-        db_token_id = cursor.fetchone()
-        if db_token_id is None:
-            return {"response": "Error"}
+
+    # Auth here
+    # auth = req.headers["Authorization"]
+    # select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
+    # # cursor.execute(select_query, auth)
+    # # db_token_id = # cursor.fetchone()
+
+    db_token_id = True  # REMEBER TO COMMENT THISSSSSS
+    if db_token_id is None:
+        return {"response": "Token Error"}
+    else:
+        if query.url == "testing":
+            # return {"Result": "Not Applicable."}
+            result = Transcribe(os.getcwd() + "\\test.mp3", True).getResult()
         else:
-            if query.url == "testing":
-                # return {"Result": "Not Applicable."}
-                result = Transcribe(os.getcwd() + "\\test.mp3", True).getResult()
-            else:
-                result = Transcribe(query.url.strip()).getResult()
+            result = Transcribe(query.url.strip()).getResult()
 
-            if type(result) != list:
-                return {"response": "Error"}
+        # Result [0] = sender
+        # Result [1] = text
 
-            # Result [0] = sender
-            # Result [1] = text
-            conversations = []
-            word_counts_sentence = ""
-            cnt = 1
-            request = dict()
-            request[
-                "Request_ID"
-            ] = f"{query.client_name}_{query.agent_name}_{query.date}_{query.unique_number}"
+        conversations = []
+        word_counts_sentence = ""
+        cnt = 1
+        request = dict()
+        request[
+            "Request_ID"
+        ] = f"{query.client_name}_{query.agent_name}_{query.date}_{query.unique_number}"
 
-            for r in result:
-                obj = {"Conversation_ID": cnt, "Sender": r[0], "Content": r[1]}
-                classifiedObj = classifier.classifySentences(r[1])
-                obj["Sentiment"] = classifiedObj["sentiment"]
-                obj["Confidence"] = classifiedObj["confidence"] * 100
-                obj["Comment"] = ""
-                obj["Request_ID"] = request["Request_ID"]
-                conversations.append(obj)
-                cnt += 1
+        for r in result:
+            obj = {"Conversation_ID": cnt, "Sender": r[0], "Content": r[1]}
+            classifiedObj = classifier.classifySentences(r[1])
+            obj["Sentiment"] = classifiedObj["sentiment"]
+            obj["Confidence"] = classifiedObj["confidence"] * 100
+            obj["Comment"] = ""
+            obj["Request_ID"] = request["Request_ID"]
+            conversations.append(obj)
+            cnt += 1
 
-                word_counts_sentence += (
-                    TextProcessing(r[1]).getProcessedSentence() + " "
-                )
+            word_counts_sentence += TextProcessing(r[1]).getProcessedSentence() + " "
 
-            word_counts = TextProcessing(word_counts_sentence).getWordCounts()
-            word_counts = dict(
-                sorted(word_counts.items(), key=lambda x: x[1], reverse=True)
-            )
-            for key, value in word_counts.items():
-                request["Highest_Count"] = value
-                break
+        word_counts = TextProcessing(word_counts_sentence).getWordCounts()
+        word_counts = dict(
+            sorted(word_counts.items(), key=lambda x: x[1], reverse=True)
+        )
 
-            request["Audio_URL"] = query.url
-            request["Date"] = query.date
-            request["Org_ID"] = org_id
+        for key, value in word_counts.items():
 
-            objCnt = 0
-            posCnt = 0
-            for c in conversations:
-                posCnt += c["Sentiment"] == "Positive"
-                objCnt += 1
+            request["Highest_Count"] = value
+            break
 
-            request["Sentiment_Distribution_Pos"] = posCnt / objCnt * 100
-            request["Sentiment_Distribution_Neg"] = (objCnt - posCnt) / objCnt * 100
+        request["Audio_URL"] = query.url
+        request["Date"] = query.date
+        request["Org_ID"] = org_id
 
-            words = []
-            cnt = 1
-            for key, value in word_counts.items():
-                obj = dict()
-                obj["Word_ID"] = cnt
-                obj["Word"] = key
-                obj["IsSensitive"] = SensitiveWordsMarking(key).hasSensitiveWord()
-                obj["Word_Count"] = value
-                obj["Request_ID"] = request["Request_ID"]
-                words.append(obj)
+        objCnt = 0
+        posCnt = 0
+        for c in conversations:
+            posCnt += c["Sentiment"] == "Positive"
+            objCnt += 1
 
-                cnt += 1
+        request["Sentiment_Distribution_Pos"] = posCnt / objCnt * 100
+        request["Sentiment_Distribution_Neg"] = (objCnt - posCnt) / objCnt * 100
+        print(request)
 
-            # final_result = [
-            #     request,
-            #     conversations,
-            #     words,
-            # ]
+        words = []
+        cnt = 1
+        for key, value in word_counts.items():
 
-            # Insert Data to MSSQL
-            request_list = []
-            word_list = []
-            conversation_list = []
+            obj = dict()
+            obj["Word_ID"] = cnt
+            obj["Word"] = key
+            obj["IsSensitive"] = SensitiveWordsMarking(str(key)).isSensitiveWord()
+            obj["Word_Count"] = value
+            obj["Request_ID"] = request["Request_ID"]
+            words.append(obj)
 
-            reuqest_insert_record = """INSERT INTO Request
-                                (Request_ID, Audio_URL, Sentiment_Distribution_Pos,
-                                Sentiment_Distribution_Neg, Highest_Count, Date, Org_ID)
-                                VALUES (?,?,?,?,?,?,?)"""
-            word_insert_record = """INSERT INTO Words
-                                (Word_ID, Word, IsSensitive,
-                                Word_Count, Request_ID)
-                                VALUES (?,?,?,?,?)"""
-            conversation_insert_record = """INSERT INTO Conversations
-                                (Conversation_ID, Sender, Content,
-                                Sentiment, Confidence, Comment, Request_ID)
-                                VALUES (?,?,?,?,?,?,?)"""
+            cnt += 1
 
-            request_data = [
-                request["Request_ID"],
-                request["Audio_URL"],
-                request["Sentiment_Distribution_Pos"],
-                request["Sentiment_Distribution_Neg"],
-                request["Highest_Count"],
-                request["Date"],
-                request["Org_ID"],
+        # Insert Data to MSSQL
+        word_list = []
+        conversation_list = []
+
+        reuqest_insert_record = """INSERT INTO Request
+                            (Request_ID, Audio_URL, Sentiment_Distribution_Pos,
+                            Sentiment_Distribution_Neg, Highest_Count, Date, Org_ID)
+                            VALUES (?,?,?,?,?,?,?)"""
+        word_insert_record = """INSERT INTO Words
+                            (Word_ID, Word, IsSensitive,
+                            Word_Count, Request_ID)
+                            VALUES (?,?,?,?,?)"""
+        conversation_insert_record = """INSERT INTO Conversations
+                            (Conversation_ID, Sender, Content,
+                            Sentiment, Confidence, Comment, Request_ID)
+                            VALUES (?,?,?,?,?,?,?)"""
+
+        request_data = [
+            request["Request_ID"],
+            request["Audio_URL"],
+            request["Sentiment_Distribution_Pos"],
+            request["Sentiment_Distribution_Neg"],
+            request["Highest_Count"],
+            request["Date"],
+            request["Org_ID"],
+        ]
+
+        # cursor.executemany("INSERT INTO Request (Request_ID, Audio_URL, Sentiment_Distribution_Pos, Sentiment_Distribution_Neg, Highest_Count, Date, Org_ID) VALUES (%s,%s,%f,%f,%d,%s,%s)", tuple(request_data))
+
+        for w in words:
+            words_data = [
+                w["Word_ID"],
+                w["Word"],
+                w["IsSensitive"],
+                w["Word_Count"],
+                w["Request_ID"],
             ]
-            request_list.append(request_data)
-            cursor.executemany(reuqest_insert_record, request_list)
+            word_list.append(words_data)
+        # cursor.executemany("INSERT INTO Words (Word_ID, Word, IsSensitive, Word_Count, Request_ID) VALUES (%d,%s,%i,%d,%s)", tuple(word_list))
 
-            for w in words:
-                words_data = [
-                    w["Word_ID"],
-                    w["Word"],
-                    w["IsSensitive"],
-                    w["Word_Count"],
-                    w["Request_ID"],
-                ]
-                word_list.append(words_data)
-            cursor.executemany(word_insert_record, word_list)
+        for c in conversations:
+            conversation_data = [
+                c["Conversation_ID"],
+                c["Sender"],
+                c["Content"],
+                c["Sentiment"],
+                c["Confidence"],
+                c["Comment"],
+                c["Request_ID"],
+            ]
+            conversation_list.append(conversation_data)
+        # cursor.executemany("INSERT INTO Conversations (Conversation_ID, Sender, Content, Sentiment, Confidence, Comment, Request_ID) VALUES (%d,%s,%s,%s,%f,%s,%s)", tuple(conversation_list))
 
-            for c in conversations:
-                conversation_data = [
-                    c["Conversation_ID"],
-                    c["Sender"],
-                    c["Content"],
-                    c["Sentiment"],
-                    c["Confidence"],
-                    c["Comment"],
-                    c["Request_ID"],
-                ]
-                conversation_list.append(conversation_data)
-            cursor.executemany(conversation_insert_record, conversation_list)
+        # conn.commit()
 
-            conn.commit()
-    except:
-        return {"response": "Error"}
     return {"response": "Success"}
 
 
@@ -252,13 +248,14 @@ def updateComment(
     delete_comment: DeleteQuery,
     req: Request,
 ):
-    cursor = conn.cursor()
+    # cursor = # conn.# cursor()
 
     # Auth here
     auth = req.headers["Authorization"]
     select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
-    cursor.execute(select_query, auth)
-    db_token_id = cursor.fetchone()
+    # cursor.execute(select_query, auth)
+    # db_token_id = # cursor.fetchone()
+    db_token_id = True
     if db_token_id is None:
         return {"response": "Error"}
     else:
@@ -266,20 +263,21 @@ def updateComment(
 
         values = (request_id, conversation_id)
 
-        cursor.execute(select_query, values)
+        # cursor.execute(select_query, values)
 
-        db_old_comment = cursor.fetchone()[0]
+        # db_old_comment = # cursor.fetchone()[0]
+        db_old_comment = True
         if delete_comment.old_comment != db_old_comment:
-            conn.commit()
+            # conn.commit()
             return {"response": "Error"}
 
         update_query = """UPDATE Conversations SET Comment = '' WHERE Request_ID= ? AND Conversation_ID=? """
 
         values = (request_id, conversation_id)
 
-        cursor.execute(update_query, values)
+        # cursor.execute(update_query, values)
 
-        conn.commit()
+        # conn.commit()
 
         return {"response": "Success"}
 
@@ -291,13 +289,14 @@ def updateComment(
     comment_update: CommentQuery,
     req: Request,
 ):
-    cursor = conn.cursor()
+    # cursor = conn.cursor()
 
     # Auth here
     auth = req.headers["Authorization"]
     select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
-    cursor.execute(select_query, auth)
-    db_token_id = cursor.fetchone()
+    # cursor.execute(select_query, auth)
+    # db_token_id = # cursor.fetchone()
+    db_token_id = True
     if db_token_id is None:
         return {"response": "Error"}
     else:
@@ -305,20 +304,21 @@ def updateComment(
 
         values = (request_id, conversation_id)
 
-        cursor.execute(select_query, values)
+        # cursor.execute(select_query, values)
 
-        db_old_comment = cursor.fetchone()[0]
+        # db_old_comment = cursor.fetchone()[0]
+        db_old_comment = 1
         if comment_update.old_comment != db_old_comment:
-            conn.commit()
+            # conn.commit()
             return {"response": "Error"}
 
         update_query = """UPDATE Conversations SET Comment = ? WHERE Request_ID= ? AND Conversation_ID=? """
 
         values = (comment_update.comment, request_id, conversation_id)
 
-        cursor.execute(update_query, values)
+        # cursor.execute(update_query, values)
 
-        conn.commit()
+        # conn.commit()
 
         return {"response": "Success"}
 
@@ -328,13 +328,14 @@ def updateSender(
     conversation_id: int, request_id: str, sender_update: SenderQuery, req: Request
 ):
 
-    cursor = conn.cursor()
+    # cursor = # conn.# cursor()
 
     # Auth here
     auth = req.headers["Authorization"]
     select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
-    cursor.execute(select_query, auth)
-    db_token_id = cursor.fetchone()
+    # cursor.execute(select_query, auth)
+    # db_token_id = # cursor.fetchone()
+    db_token_id = True
     if db_token_id is None:
         return {"response": "Error"}
     else:
@@ -342,20 +343,21 @@ def updateSender(
 
         values = (request_id, conversation_id)
 
-        cursor.execute(select_query, values)
+        # cursor.execute(select_query, values)
 
-        db_old_sender = cursor.fetchone()[0]
+        # db_old_sender = cursor.fetchone()[0]
+        db_old_sender = 1
         if sender_update.old_sender != db_old_sender:
-            conn.commit()
+            # conn.commit()
             return {"response": "Error"}
 
         update_query = """UPDATE Conversations SET Sender = ? WHERE Request_ID= ? AND Conversation_ID=? """
 
         values = (sender_update.sender, request_id, conversation_id)
 
-        cursor.execute(update_query, values)
+        # cursor.execute(update_query, values)
 
-        conn.commit()
+        # conn.commit()
 
         return {"response": "Updated Successfully"}
 
@@ -363,20 +365,22 @@ def updateSender(
 @app.get("/stt/requests/{org_id}")
 async def ReturnRequests(org_id: str, req: Request):
 
-    cursor = conn.cursor()
+    # cursor = # conn.# cursor()
     print(req.headers)
     auth = req.headers["Authorization"]
 
     select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
-    cursor.execute(select_query, auth)
+    # cursor.execute(select_query, auth)
 
-    db_token_id = cursor.fetchone()
+    # db_token_id = # cursor.fetchone()
 
+    db_token_id = True
     if db_token_id is None:
         return {"response": "Error"}
     else:
-        cursor.execute("SELECT Request_ID FROM Request WHERE Org_ID = ? ", org_id)
-        rows = cursor.fetchall()
+        # cursor.execute("SELECT Request_ID FROM Request WHERE Org_ID = ? ", org_id)
+        # rows = # cursor.fetchall()
+        rows = 1
         RequestList = []
         for row in rows:
             data = row[0]
@@ -389,19 +393,20 @@ async def ReturnRequests(org_id: str, req: Request):
 
 @app.get("/stt/request/{req_id}")
 async def STT_Test(req_id: str, req: Request):
-    cursor = conn.cursor()
+    # cursor = # conn.# cursor()
     auth = req.headers["Authorization"]
 
     select_query = """SELECT Token_ID FROM Authorisation WHERE Token_ID= ?"""
-    cursor.execute(select_query, auth)
+    # cursor.execute(select_query, auth)
 
-    db_token_id = cursor.fetchone()
+    # db_token_id = # cursor.fetchone()
 
+    db_token_id = True
     if db_token_id is None:
         return {"response": "Error"}
     else:
-        cursor.execute("SELECT * FROM Request WHERE Request_ID = ? ", req_id)
-        rows = cursor.fetchall()
+        # cursor.execute("SELECT * FROM Request WHERE Request_ID = ? ", req_id)
+        rows = 1  # cursor.fetchall()
 
         for row in rows:
             data = {
@@ -411,8 +416,8 @@ async def STT_Test(req_id: str, req: Request):
                 "date": row[5],
             }
 
-        cursor.execute("SELECT * FROM Words WHERE Request_ID = ? ", req_id)
-        rows = cursor.fetchall()
+        # cursor.execute("SELECT * FROM Words WHERE Request_ID = ? ", req_id)
+        rows = 1  # cursor.fetchall()
         objects_list = []
         for row in rows:
             object_dict = {
@@ -425,8 +430,8 @@ async def STT_Test(req_id: str, req: Request):
             }
             objects_list.append(object_dict)
 
-        cursor.execute("SELECT * FROM Conversations WHERE Request_ID = ? ", req_id)
-        rows = cursor.fetchall()
+        # cursor.execute("SELECT * FROM Conversations WHERE Request_ID = ? ", req_id)
+        rows = 1  # cursor.fetchall()
         objects_list1 = []
         for row in rows:
             object_dict = {

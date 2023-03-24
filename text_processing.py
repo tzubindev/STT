@@ -24,7 +24,7 @@ for tag in data:
 
 class TextProcessing:
     def __init__(self, sentence) -> None:
-        nltk.download("stopwords")
+        # nltk.download("stopwords")
         self.stop_words = set(stopwords.words("english"))
         word_tokens = word_tokenize(sentence)
         self.original_s = sentence
