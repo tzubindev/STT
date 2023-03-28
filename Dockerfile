@@ -11,6 +11,8 @@ COPY ./requirements.txt /code/requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
+RUN python3 -m pip install pymssql
+
 # 
 COPY . /code/
 
