@@ -5,10 +5,9 @@ RUN apt-get update && \
     apt-get install -y ffmpeg && \
     apt-get install -y apt-utils && \
     apt-get install -y freetds-dev && \
-    apt-get install -y python3.8-dev && \
-
-    # 
-    WORKDIR /code
+    apt-get install -y python3.8-dev
+# 
+WORKDIR /code
 
 COPY ./requirements.txt /code/requirements.txt
 
