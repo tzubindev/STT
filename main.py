@@ -97,7 +97,7 @@ app = FastAPI()
 app.add_middleware(GZipMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://193.168.10.183"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
