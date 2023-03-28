@@ -6,6 +6,8 @@ RUN apt-get update && \
     apt-get install -y freetds-dev && \
     apt-get install python3.9-dev
 
+RUN y
+
 # 
 WORKDIR /code
 
