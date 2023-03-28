@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware import Middleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from textblob import TextBlob
@@ -80,19 +80,16 @@ class RequestDelete(BaseModel):
 
 classifier = NaiveBayes()
 
-origins = ["*"]
+app = FastAPI()
 
-middleware = [
-    Middleware(
-        CORSMiddleware,
-        allow_origins=origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-]
-
-app = FastAPI(middleware=middleware)
+app.add_middleware(GZipMiddleware)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
