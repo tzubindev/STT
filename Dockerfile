@@ -4,7 +4,8 @@ FROM python:3.9
 RUN apt-get update && \
     apt-get install -y ffmpeg && \
     apt-get install -y freetds-dev && \
-    apt-get install -y python3.9-dev
+    apt-get install -y python3.9-dev && \
+    apt-get install -y apt-utils
 
 # 
 WORKDIR /code
