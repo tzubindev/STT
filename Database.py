@@ -72,20 +72,6 @@ cursor.execute(
 """
 )
 
-cursor.execute(
-    """
-		CREATE TABLE Conversations (
-			Conversation_ID int NOT NULL,
-            Sender varchar(255) NOT NULL,
-            Content varchar(max) NOT NULL,
-            Sentiment varchar(8) NOT NULL,
-            Confidence float NOT NULL,
-            Comment varchar(max) DEFAULT '',
-            Request_ID varchar(255) FOREIGN KEY REFERENCES Request(Request_ID),
-            PRIMARY KEY (Conversation_ID, Request_ID)
-		)
-"""
-)
 
 cursor.execute(
     """
