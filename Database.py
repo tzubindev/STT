@@ -81,7 +81,6 @@ INSERT INTO [dbo].[Authorisation]
      VALUES
            ('asdasd8adasd'
            ,'org1')
-GO
 """
 )
 
