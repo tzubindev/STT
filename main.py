@@ -80,7 +80,7 @@ class RequestDelete(BaseModel):
 classifier = NaiveBayes()
 
 app = FastAPI()
-origins = ["http://193.168.10.183:8080"]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
