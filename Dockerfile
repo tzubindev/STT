@@ -1,7 +1,7 @@
 
 FROM python:3.8-alpine
 
-RUN python 3.8 -m pip install --upgrade pip
+RUN python3.8 -m pip install --upgrade pip
 
 RUN apt-get update && \
     apt-get install -y ffmpeg && \
