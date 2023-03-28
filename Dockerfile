@@ -1,11 +1,14 @@
 
-FROM python:3.8
+FROM python:3.8-alpine
+
+RUN pip install --upgrade pip
 
 RUN apt-get update && \
     apt-get install -y ffmpeg && \
     apt-get install -y apt-utils && \
     apt-get install -y freetds-dev && \
     apt-get install -y python3.8-dev
+
 # 
 WORKDIR /code
 
