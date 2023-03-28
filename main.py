@@ -13,6 +13,8 @@ import os
 import pymssql
 import json
 import nltk
+import random
+import string
 
 from text_processing import TextProcessing
 from sensitive_words_marking import SensitiveWordsMarking
@@ -26,7 +28,7 @@ config = dotenv_values(".env")
 # Create the connection to SQL SERVER
 conn = pymssql.connect(
     server=config["SERVER"],
-    database=config['DATABASE'],
+    database=config["DATABASE"],
     port=config["PORT"],
     user=config["USERNAME"],
     password=config["PASSWORD"],
@@ -36,9 +38,13 @@ conn = pymssql.connect(
 # )
 cursor = conn.cursor()
 
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
-nltk.download('wordnet')
+nltk.download("punkt")
+nltk.download("averaged_perceptron_tagger")
+nltk.download("wordnet")
+
+
+class OrgQuery(BaseModel):
+    name: str
 
 
 class AudioQuery(BaseModel):
@@ -101,6 +107,19 @@ def Doc():
     return HTMLResponse(content=lines)
 
 
+# @app.post("/stt/addOrg/")
+# def AddOrg(query: OrgQuery):
+#     N = 20
+#     token_key = "".join(
+#         random.SystemRandom().choice(string.ascii_uppercase + string.digits)
+#         for _ in range(N)
+#     )
+#     print(token_key)
+#     cursor.execute("SELECT * FROM Authorisation")
+#     result = cursor.fetchall()
+#     print(result)
+
+
 @app.post("/stt/addRequest/{org_id}")
 def AddRequest(org_id: str, query: AudioQuery, req: Request):
 
@@ -109,7 +128,7 @@ def AddRequest(org_id: str, query: AudioQuery, req: Request):
     # Auth here
     auth = req.headers["Authorization"]
     cursor.execute("SELECT Token_ID FROM Authorisation WHERE Token_ID= %s", auth)
-    db_token_id =  cursor.fetchone()
+    db_token_id = cursor.fetchone()
 
     # db_token_id = True  # REMEBER TO COMMENT THISSSSSS
     if db_token_id is None:
@@ -187,16 +206,21 @@ def AddRequest(org_id: str, query: AudioQuery, req: Request):
         conversation_list = []
 
         request_data = [
-            (request["Request_ID"],
-            request["Audio_URL"],
-            request["Sentiment_Distribution_Pos"],
-            request["Sentiment_Distribution_Neg"],
-            request["Highest_Count"],
-            request["Date"],
-            request["Org_ID"])
+            (
+                request["Request_ID"],
+                request["Audio_URL"],
+                request["Sentiment_Distribution_Pos"],
+                request["Sentiment_Distribution_Neg"],
+                request["Highest_Count"],
+                request["Date"],
+                request["Org_ID"],
+            )
         ]
 
-        cursor.executemany("INSERT INTO Request (Request_ID, Audio_URL, Sentiment_Distribution_Pos, Sentiment_Distribution_Neg, Highest_Count, Date, Org_ID) VALUES (%s,%s,%s,%s,%d,%s,%s)", request_data)
+        cursor.executemany(
+            "INSERT INTO Request (Request_ID, Audio_URL, Sentiment_Distribution_Pos, Sentiment_Distribution_Neg, Highest_Count, Date, Org_ID) VALUES (%s,%s,%s,%s,%d,%s,%s)",
+            request_data,
+        )
 
         for w in words:
             words_data = (
@@ -204,25 +228,31 @@ def AddRequest(org_id: str, query: AudioQuery, req: Request):
                 w["Word"],
                 w["IsSensitive"],
                 w["Word_Count"],
-                w["Request_ID"]
+                w["Request_ID"],
             )
             word_list.append(words_data)
 
-        cursor.executemany("INSERT INTO Words (Word_ID, Word, IsSensitive, Word_Count, Request_ID) VALUES (%d,%s,%d,%d,%s)", word_list)
+        cursor.executemany(
+            "INSERT INTO Words (Word_ID, Word, IsSensitive, Word_Count, Request_ID) VALUES (%d,%s,%d,%d,%s)",
+            word_list,
+        )
 
         for c in conversations:
-            conversation_data = ( 
+            conversation_data = (
                 c["Conversation_ID"],
                 c["Sender"],
                 c["Content"],
                 c["Sentiment"],
                 c["Confidence"],
                 c["Comment"],
-                c["Request_ID"]
-                )
+                c["Request_ID"],
+            )
             conversation_list.append(conversation_data)
 
-        cursor.executemany("INSERT INTO Conversations (Conversation_ID, Sender, Content, Sentiment, Confidence, Comment, Request_ID) VALUES (%d,%s,%s,%s,%s,%s,%s)", conversation_list)
+        cursor.executemany(
+            "INSERT INTO Conversations (Conversation_ID, Sender, Content, Sentiment, Confidence, Comment, Request_ID) VALUES (%d,%s,%s,%s,%s,%s,%s)",
+            conversation_list,
+        )
 
         conn.commit()
 
@@ -246,7 +276,10 @@ def deleteComment(
     else:
         values = (request_id, conversation_id)
 
-        cursor.execute("SELECT Comment FROM Conversations WHERE Request_ID= %s AND Conversation_ID=%d ", values)
+        cursor.execute(
+            "SELECT Comment FROM Conversations WHERE Request_ID= %s AND Conversation_ID=%d ",
+            values,
+        )
 
         db_old_comment = cursor.fetchone()[0]
         # db_old_comment = True
@@ -254,10 +287,12 @@ def deleteComment(
             conn.commit()
             return {"response": "Error"}
 
-
         values = (request_id, conversation_id)
 
-        cursor.execute("UPDATE Conversations SET Comment = '' WHERE Request_ID= %s AND Conversation_ID=%d ", values)
+        cursor.execute(
+            "UPDATE Conversations SET Comment = '' WHERE Request_ID= %s AND Conversation_ID=%d ",
+            values,
+        )
 
         conn.commit()
 
@@ -281,7 +316,10 @@ def updateComment(
     else:
         values = (request_id, conversation_id)
 
-        cursor.execute("SELECT Comment FROM Conversations WHERE Request_ID= %s AND Conversation_ID=%d ", values)
+        cursor.execute(
+            "SELECT Comment FROM Conversations WHERE Request_ID= %s AND Conversation_ID=%d ",
+            values,
+        )
 
         db_old_comment = cursor.fetchone()[0]
 
@@ -291,7 +329,10 @@ def updateComment(
 
         values = (comment_update.comment, request_id, conversation_id)
 
-        cursor.execute("UPDATE Conversations SET Comment = %s WHERE Request_ID= %s AND Conversation_ID= %d ", values)
+        cursor.execute(
+            "UPDATE Conversations SET Comment = %s WHERE Request_ID= %s AND Conversation_ID= %d ",
+            values,
+        )
 
         conn.commit()
 
@@ -312,7 +353,10 @@ def updateSender(
     else:
         values = (request_id, conversation_id)
 
-        cursor.execute("SELECT Sender FROM Conversations WHERE Request_ID= %s AND Conversation_ID=%d", values)
+        cursor.execute(
+            "SELECT Sender FROM Conversations WHERE Request_ID= %s AND Conversation_ID=%d",
+            values,
+        )
 
         db_old_sender = cursor.fetchone()[0]
         # db_old_sender = 1
@@ -322,7 +366,10 @@ def updateSender(
 
         values = (sender_update.sender, request_id, conversation_id)
 
-        cursor.execute("UPDATE Conversations SET Sender = %s WHERE Request_ID= %s AND Conversation_ID= %d", values)
+        cursor.execute(
+            "UPDATE Conversations SET Sender = %s WHERE Request_ID= %s AND Conversation_ID= %d",
+            values,
+        )
 
         conn.commit()
 
