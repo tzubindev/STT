@@ -3,12 +3,12 @@ FROM python:3.8
 
 RUN apt-get update && \
     apt-get install -y ffmpeg && \
+    apt-get install -y apt-utils && \
     apt-get install -y freetds-dev && \
     apt-get install -y python3.8-dev && \
-    apt-get install -y apt-utils
 
-# 
-WORKDIR /code
+    # 
+    WORKDIR /code
 
 COPY ./requirements.txt /code/requirements.txt
 
