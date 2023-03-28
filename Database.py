@@ -4,7 +4,9 @@ from dotenv import dotenv_values
 
 config = dotenv_values(".env")
 print(config)
-connection_string = f"DRIVER={{SQL Server}};SERVER={config['SERVER']};DATABASE={config['DATABASE']};UID={config['USERNAME']};PWD={config['PASSWORD']};"
+connection_string = "DRIVER={{SQL Server}};SERVER={};DATABASE={};UID={};PWD={}".format(
+    config["SERVER"], config["DATABASE"], config["USERNAME"], config["PASSWORD"]
+)
 
 # Create the connection to SQL SERVER
 conn = odcb.connect(connection_string)
