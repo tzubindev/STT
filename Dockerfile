@@ -20,4 +20,4 @@ RUN python /code/Database.py
 ENV PYTHONPATH /code/
 
 # 
-CMD ["uvicorn", "main:app","--port", "3001"]
+CMD ["python", "-m","uvicorn", "main:app","--port", "3001"]
