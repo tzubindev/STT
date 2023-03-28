@@ -12,12 +12,12 @@ COPY ./requirements.txt /code/requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
+RUN python Database.py
+
 # 
 COPY . /code/
 
 ENV PYTHONPATH /code/
-
-RUN python Database.py
 
 # 
 CMD ["uvicorn", "main:app", "--port", "8081"]
