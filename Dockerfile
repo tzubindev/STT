@@ -3,7 +3,6 @@ FROM python:3.8
 
 RUN apt-get update && \
     apt-get install -y ffmpeg && \
-    apt-get install -y python3-distutils && \
     apt-get install -y apt-utils && \
     apt-get install -y freetds-dev freetds-bin && \
     apt-get install -y python3.8-dev 
@@ -13,6 +12,10 @@ RUN pip install --upgrade pip
 WORKDIR /code
 
 COPY ./requirements.txt /code/requirements.txt
+
+RUN python3.8 -m pip install -r /code/pyAudioAnalysis/requirements.txt
+
+RUN pip install -e .
 
 RUN python3.8 -m pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
