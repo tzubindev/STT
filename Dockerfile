@@ -11,7 +11,7 @@ RUN pip install --upgrade pip
 # 
 WORKDIR /code
 
-COPY .requirements.txt /code/requirements.txt
+COPY ./requirements.txt /code/requirements.txt
 
 RUN python3.8 -m pip install --no-cache-dir --upgrade -r ./code/requirements.txt
 
