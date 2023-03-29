@@ -17,16 +17,6 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY . /code/
 
-RUN ls
-
-WORKDIR /pyAudioAnalysis
-
-COPY ./pyAudioAnalysis/requirements.txt /code/pyAudioAnalysis/requirements.txt
-
-RUN pip install -r ./code/pyAudioAnalysis/requirements.txt
-
-RUN pip install -e .
-
 ENV PYTHONPATH /code/
 
 RUN python Database.py
