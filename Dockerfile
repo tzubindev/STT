@@ -11,11 +11,17 @@ RUN pip install --upgrade pip
 # 
 WORKDIR /code
 
-RUN python3.8 -m pip install --no-cache-dir --upgrade -r ./requirements.txt
+COPY requirements.txt /code/requirements.txt
 
-RUN pip install -e ./pyAudioAnalysis
+RUN python3.8 -m pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+COPY pyAudioAnalysis /code/pyAudioAnalysis/
+
+RUN pip install -e ./pyAudioAnalysis/
 # 
-# COPY . /code/
+COPY . /code/
+
+ENV PYTHONPATH /code/
 
 RUN python Database.py
 
