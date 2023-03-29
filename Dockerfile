@@ -19,7 +19,7 @@ COPY . /code/
 
 WORKDIR /pyAudioAnalysis
 
-RUN ls
+RUN ls .
 
 RUN pip install -r ./code/pyAudioAnalysis/requirements.txt
 
