@@ -3,11 +3,13 @@ FROM python:3.8
 
 RUN apt-get update && \
     apt-get install -y ffmpeg && \
+    apt-get install -y python3-distutils && \
     apt-get install -y apt-utils && \
-    apt-get install -y freetds-dev && \
-    apt-get install -y python3.8-dev
+    apt-get install -y freetds-dev freetds-bin && \
+    apt-get install -y python-dev python-pip
 
 RUN pip install --upgrade pip
+RUN pip install install pymssql
 # 
 WORKDIR /code
 
