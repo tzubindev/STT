@@ -6,10 +6,9 @@ RUN apt-get update && \
     apt-get install -y python3-distutils && \
     apt-get install -y apt-utils && \
     apt-get install -y freetds-dev freetds-bin && \
-    apt-get install -y python-dev python-pip
+    apt-get install -y python3.8-dev python3.8-pip
 
 RUN pip install --upgrade pip
-RUN pip install install pymssql
 # 
 WORKDIR /code
 
