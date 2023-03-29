@@ -17,11 +17,9 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY . /code/
 
-ENV PYTHONPATH /code/pyAudioAnalysis/
+RUN ls ./code/pyAudioAnalysis/
 
-RUN pip install -r ./requirements.txt
-
-RUN ls
+RUN pip install -r ./code/pyAudioAnalysis/requirements.txt
 
 RUN pip install -e .
 
