@@ -13,7 +13,7 @@ WORKDIR /code
 
 COPY requirements.txt /code/requirements.txt
 
-RUN python3.8 -m pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY pyAudioAnalysis /code/pyAudioAnalysis/
 
