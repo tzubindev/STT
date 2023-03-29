@@ -21,6 +21,8 @@ ENV PYTHONPATH /code/pyAudioAnalysis/
 
 RUN pip install -r ./requirements.txt
 
+RUN ls
+
 RUN pip install -e .
 
 ENV PYTHONPATH /code/
