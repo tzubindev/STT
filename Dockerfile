@@ -13,10 +13,6 @@ WORKDIR /code
 
 COPY . /code/
 
-RUN ls /code
-
-RUN python3.8 -m pip install -r ./code/pyAudioAnalysis/requirements.txt
-
 RUN pip install -e .
 
 RUN python3.8 -m pip install --no-cache-dir --upgrade -r ./code/requirements.txt
