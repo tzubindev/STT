@@ -4,11 +4,11 @@ FROM python:3.8
 RUN apt-get update && \
     apt-get install -y ffmpeg && \
     apt-get install -y apt-utils && \
+    apt-get install -y python3-distutils && \
     apt-get -y install libc-dev && \
     apt-get -y install build-essential && \
     apt-get install -y freetds-dev freetds-bin && \
-    apt-get install -y python3.8-dev  && \
-    apt-get install -y python-distutils
+    apt-get install -y python3.8-dev 
 
 RUN pip install --upgrade pip
 # 
