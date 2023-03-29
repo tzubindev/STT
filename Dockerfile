@@ -11,17 +11,13 @@ RUN pip install --upgrade pip
 # 
 WORKDIR /code
 
-COPY ./requirements.txt /code/requirements.txt
+RUN python3.8 -m pip install --no-cache-dir --upgrade -r ./requirements.txt
 
-RUN python3.8 -m pip install --no-cache-dir --upgrade -r ./code/requirements.txt
-
-RUN pip install -e ./code/pyAudioAnalysis
+RUN pip install -e ./pyAudioAnalysis
 # 
 # COPY . /code/
 
-RUN python /code/Database.py
-
-ENV PYTHONPATH /code/
+RUN python Database.py
 
 # 
 CMD ["python", "-m","uvicorn", "main:app","--port", "3001"]
