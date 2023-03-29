@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY . /code/
 
-RUN ls ./code/pyAudioAnalysis/
+RUN ls /code/pyAudioAnalysis/
 
 RUN pip install -r ./code/pyAudioAnalysis/requirements.txt
 
