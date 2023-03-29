@@ -8,6 +8,6 @@
 /test2.py
 __pycache__/
 *.py[cod]
-
+tests/
 sample.json
 plotting.py
